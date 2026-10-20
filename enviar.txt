@@ -1,1 +1,15 @@
+ESTRUCTURA DE DATOS - TALLER 02
 
+Integrante:
+- Nombre: Pedro Segovia
+- RUT: 21672694-4
+- Carrera: Ingeniería en Tecnologías de la Información
+- Usuario GitHub: Seggov
+
+- Nombre: Luis Molina Aguilera
+- RUT: 21.564.225-9
+- Carrera: Ingeniería en Tecnologías de la Información
+- Usuario GitHub: mixolydiann
+
+Link del Repositorio:
+https://github.com/Seggov/Taller-2_Estructura
