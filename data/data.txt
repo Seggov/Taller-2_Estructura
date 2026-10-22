@@ -1,100 +1,100 @@
-001; Emilio Vargas; 62; Cardiologia
-002; Oscar Cruz; 20; Pediatria
-003; Ricardo Romero; 10; Neurologia
-004; Gabriel Mendez; 74; Pediatria
-005; Ricardo Castillo; 35; Pediatria
-006; Roberto Medina; 12; Urgencias
-007; Isabella Gomez; 39; Hospitalizacion
-008; Victor Paredes; 7; Hospitalizacion
-009; Mario Salazar; 83; Hospitalizacion
-010; Oscar Ruiz; 64; Pediatria
-011; Beatriz Silva; 15; Urgencias
-012; Alejandro Ramirez; 73; Neurologia
-013; Rosa Paredes; 44; Cardiologia
-014; Elena Molina; 40; Pediatria
-015; Paula Sanchez; 13; Medicina General
-016; Alejandro Gonzalez; 72; Medicina General
-017; Carlos Flores; 80; Cirugia
-018; Alejandro Aguilar; 23; Neurologia
-019; Elena Silva; 46; Hospitalizacion
-020; Matias Valdez; 44; Neurologia
-021; Javier Chavez; 30; Medicina General
-022; Teresa Romero; 64; Medicina General
-023; Valeria Fuentes; 60; Medicina General
-024; Alicia Rios; 78; Medicina General
-025; Teresa Mendoza; 61; Cirugia
-026; Victoria Mendoza; 60; Traumatologia
-027; Victor Molina; 92; Cirugia
-028; Isabella Mendoza; 77; Traumatologia
-029; Luis Torres; 17; Pediatria
-030; Fernando Flores; 63; Cardiologia
-031; Beatriz Cabrera; 59; Cardiologia
-032; Oscar Ramirez; 43; Medicina General
-033; Hugo Guzman; 48; Neurologia
-034; Patricia Perez; 52; Neurologia
-035; Victor Castro; 57; Cardiologia
-036; Andres Ramirez; 7; Traumatologia
-037; Sebastian Silva; 70; Cirugia
-038; Mario Ramos; 33; Neurologia
-039; Ana Navarro; 17; Pediatria
-040; Sofia Gonzalez; 42; Urgencias
-041; Gabriel Martinez; 89; Traumatologia
-042; Patricia Torres; 17; Cardiologia
-043; Laura Soto; 49; Pediatria
-044; Natalia Diaz; 39; Hospitalizacion
-045; Ana Rivas; 90; Neurologia
-046; Carmen Gomez; 47; Neurologia
-047; Elena Guzman; 44; Urgencias
-048; Elena Rojas; 94; Traumatologia
-049; Emilio Chavez; 94; Urgencias
-050; Alejandro Rojas; 61; Neurologia
-051; Emilio Rojas; 28; Hospitalizacion
-052; Luis Mendez; 79; Urgencias
-053; Valentina Chavez; 24; Cirugia
-054; Julia Gutierrez; 72; Pediatria
-055; Luis Gutierrez; 67; Neurologia
-056; Mario Diaz; 69; Cardiologia
-057; Oscar Navarro; 86; Medicina General
-058; Natalia Reyes; 13; Hospitalizacion
-059; Fernando Castillo; 35; Urgencias
-060; Fernando Diaz; 79; Urgencias
-061; Jose Castro; 77; Urgencias
-062; Sofia Ramirez; 28; Medicina General
-063; Raul Ramos; 26; Cardiologia
-064; Mario Fernandez; 13; Neurologia
-065; Felipe Perez; 33; Pediatria
-066; Teresa Gonzalez; 62; Pediatria
-067; Gabriel Reyes; 5; Traumatologia
-068; Silvia Diaz; 81; Cirugia
-069; Jorge Cruz; 68; Medicina General
-070; Jorge Diaz; 46; Urgencias
-071; Marta Martinez; 73; Pediatria
-072; Laura Guzman; 65; Pediatria
-073; Sebastian Mendez; 58; Medicina General
-074; Ricardo Maldonado; 85; Cardiologia
-075; Fernando Castillo; 72; Pediatria
-076; Alicia Martinez; 45; Cirugia
-077; Alejandro Castillo; 68; Traumatologia
-078; Raul Mendez; 51; Neurologia
-079; Javier Rios; 65; Pediatria
-080; Sebastian Rios; 44; Traumatologia
-081; Fernando Cruz; 54; Cardiologia
-082; Sofia Rojas; 94; Cardiologia
-083; Matias Castro; 28; Pediatria
-084; Jose Muñoz; 77; Urgencias
-085; Fernanda Chavez; 42; Urgencias
-086; Isabella Alvarez; 42; Medicina General
-087; Valeria Mendoza; 84; Pediatria
-088; Daniela Ruiz; 86; Hospitalizacion
-089; Gloria Valdez; 60; Medicina General
-090; Mario Romero; 22; Traumatologia
-091; Maria Martinez; 56; Pediatria
-092; Roberto Fuentes; 34; Pediatria
-093; Daniela Ruiz; 4; Cardiologia
-094; Roberto Diaz; 59; Traumatologia
-095; Rosa Muñoz; 51; Medicina General
-096; Laura Navarro; 26; Cardiologia
-097; Beatriz Ramirez; 39; Cirugia
-098; Beatriz Delgado; 46; Neurologia
-099; Maria Rivas; 83; Cirugia
-100; Victoria Alvarez; 39; Neurologia
+001; Juan Perez; 25; 37.0; 174; 7; otro; 0; 0; 0; 0
+002; Oscar Cruz; 20; 36.4; 121; 0; otro; 0; 0; 0; 3
+003; Ricardo Romero; 10; 36.4; 93; 4; otro; 0; 1; 0; 1
+004; Gabriel Mendez; 74; 36.4; 141; 6; cabeza; 0; 1; 0; 4
+005; Ricardo Castillo; 35; 36.4; 158; 9; pecho; 0; 0; 0; 2
+006; Roberto Medina; 12; 39.3; 92; 3; cabeza; 0; 0; 0; 3
+007; Isabella Gomez; 39; 37.9; 129; 6; cabeza; 0; 0; 0; 2
+008; Victor Paredes; 7; 36.7; 106; 1; otro; 0; 0; 0; 3
+009; Mario Salazar; 83; 37.7; 148; 2; extremidad; 0; 0; 0; 10
+010; Oscar Ruiz; 64; 37.0; 140; 2; otro; 0; 0; 0; 2
+011; Beatriz Silva; 15; 40.0; 117; 9; otro; 0; 0; 0; 3
+012; Alejandro Ramirez; 73; 37.1; 146; 8; cabeza; 0; 1; 0; 0
+013; Rosa Paredes; 44; 36.6; 165; 6; pecho; 0; 0; 0; 0
+014; Elena Molina; 40; 36.4; 130; 7; abdomen; 1; 0; 1; 5
+015; Paula Sanchez; 13; 37.3; 92; 0; otro; 0; 0; 0; 0
+016; Alejandro Gonzalez; 72; 36.9; 135; 1; cabeza; 0; 0; 0; 0
+017; Carlos Flores; 80; 37.1; 141; 10; abdomen; 1; 0; 1; 6
+018; Alejandro Aguilar; 23; 37.1; 122; 3; otro; 0; 1; 0; 4
+019; Elena Silva; 46; 37.7; 133; 1; cabeza; 0; 0; 0; 6
+020; Matias Valdez; 44; 36.7; 128; 2; cabeza; 0; 1; 0; 3
+021; Javier Chavez; 30; 37.2; 111; 2; extremidad; 0; 0; 0; 0
+022; Teresa Romero; 64; 36.0; 140; 2; extremidad; 0; 0; 0; 1
+023; Valeria Fuentes; 60; 36.5; 127; 3; otro; 0; 0; 0; 0
+024; Alicia Rios; 78; 36.2; 148; 1; otro; 0; 0; 0; 1
+025; Teresa Mendoza; 61; 36.6; 131; 7; extremidad; 1; 0; 1; 2
+026; Victoria Mendoza; 60; 36.9; 125; 4; otro; 1; 0; 0; 0
+027; Victor Molina; 92; 36.9; 144; 9; extremidad; 1; 0; 1; 4
+028; Isabella Mendoza; 77; 36.6; 144; 6; extremidad; 1; 0; 0; 0
+029; Luis Torres; 17; 36.6; 168; 5; pecho; 0; 0; 0; 3
+030; Fernando Flores; 63; 36.6; 148; 9; pecho; 0; 0; 0; 1
+031; Beatriz Cabrera; 59; 36.0; 177; 7; pecho; 0; 0; 0; 1
+032; Oscar Ramirez; 43; 37.3; 127; 1; extremidad; 0; 0; 0; 0
+033; Hugo Guzman; 48; 36.2; 126; 4; otro; 0; 1; 0; 4
+034; Patricia Perez; 52; 36.2; 128; 7; cabeza; 0; 1; 0; 0
+035; Victor Castro; 57; 37.1; 139; 7; pecho; 0; 0; 0; 2
+036; Andres Ramirez; 7; 37.3; 95; 7; extremidad; 1; 0; 0; 1
+037; Sebastian Silva; 70; 36.6; 128; 8; extremidad; 1; 0; 1; 2
+038; Mario Ramos; 33; 36.1; 128; 6; cabeza; 0; 1; 0; 4
+039; Ana Navarro; 17; 39.9; 114; 4; cabeza; 0; 0; 0; 2
+040; Sofia Gonzalez; 42; 39.1; 193; 8; extremidad; 0; 0; 0; 2
+041; Gabriel Martinez; 89; 36.8; 137; 4; otro; 1; 0; 0; 2
+042; Patricia Torres; 17; 37.4; 143; 3; pecho; 0; 0; 0; 2
+043; Laura Soto; 49; 36.9; 128; 7; extremidad; 1; 0; 0; 1
+044; Natalia Diaz; 39; 37.4; 127; 5; abdomen; 0; 0; 0; 10
+045; Ana Rivas; 90; 37.0; 149; 2; cabeza; 0; 1; 0; 2
+046; Carmen Gomez; 47; 36.8; 131; 6; otro; 0; 1; 0; 0
+047; Elena Guzman; 44; 39.9; 187; 0; otro; 0; 0; 0; 3
+048; Elena Rojas; 94; 36.1; 146; 6; otro; 1; 0; 0; 0
+049; Emilio Chavez; 94; 39.8; 147; 2; extremidad; 0; 0; 0; 3
+050; Alejandro Rojas; 61; 37.3; 142; 5; otro; 0; 1; 0; 1
+051; Emilio Rojas; 28; 37.6; 109; 0; otro; 0; 0; 0; 6
+052; Luis Mendez; 79; 39.7; 140; 9; otro; 0; 0; 0; 1
+053; Valentina Chavez; 24; 37.4; 110; 10; abdomen; 1; 0; 1; 4
+054; Julia Gutierrez; 72; 36.1; 169; 5; pecho; 0; 0; 0; 2
+055; Luis Gutierrez; 67; 36.5; 139; 4; cabeza; 0; 1; 0; 4
+056; Mario Diaz; 69; 36.2; 144; 7; pecho; 0; 0; 0; 1
+057; Oscar Navarro; 86; 36.0; 138; 4; cabeza; 0; 0; 0; 1
+058; Natalia Reyes; 13; 36.6; 99; 2; abdomen; 0; 0; 0; 9
+059; Fernando Castillo; 35; 39.5; 196; 9; abdomen; 0; 0; 0; 1
+060; Fernando Diaz; 79; 40.2; 146; 4; abdomen; 0; 0; 0; 2
+061; Jose Castro; 77; 40.4; 138; 10; extremidad; 0; 0; 0; 3
+062; Sofia Ramirez; 28; 36.6; 114; 1; otro; 0; 0; 0; 0
+063; Raul Ramos; 26; 37.2; 144; 4; pecho; 0; 0; 0; 3
+064; Mario Fernandez; 13; 37.0; 111; 8; cabeza; 0; 1; 0; 0
+065; Felipe Perez; 33; 36.4; 156; 4; pecho; 0; 0; 0; 1
+066; Teresa Gonzalez; 62; 37.1; 132; 4; extremidad; 1; 0; 0; 2
+067; Gabriel Reyes; 5; 37.0; 111; 7; otro; 1; 0; 0; 2
+068; Silvia Diaz; 81; 37.2; 150; 8; abdomen; 1; 0; 1; 2
+069; Jorge Cruz; 68; 37.3; 132; 0; otro; 0; 0; 0; 1
+070; Jorge Diaz; 46; 38.5; 135; 8; cabeza; 0; 0; 0; 2
+071; Marta Martinez; 73; 36.0; 170; 3; pecho; 0; 0; 0; 1
+072; Laura Guzman; 65; 37.1; 129; 5; extremidad; 1; 0; 0; 2
+073; Sebastian Mendez; 58; 36.9; 132; 0; otro; 0; 0; 0; 0
+074; Ricardo Maldonado; 85; 36.2; 167; 7; pecho; 0; 0; 0; 1
+075; Fernando Castillo; 72; 36.9; 139; 5; otro; 0; 1; 0; 2
+076; Alicia Martinez; 45; 36.7; 127; 6; extremidad; 1; 0; 1; 5
+077; Alejandro Castillo; 68; 37.1; 135; 8; extremidad; 1; 0; 0; 2
+078; Raul Mendez; 51; 36.6; 125; 7; cabeza; 0; 1; 0; 4
+079; Javier Rios; 65; 36.7; 135; 8; abdomen; 1; 0; 1; 7
+080; Sebastian Rios; 44; 36.5; 121; 8; otro; 1; 0; 0; 1
+081; Fernando Cruz; 54; 36.9; 162; 4; pecho; 0; 0; 0; 1
+082; Sofia Rojas; 94; 36.7; 176; 5; pecho; 0; 0; 0; 3
+083; Matias Castro; 28; 36.9; 126; 5; otro; 1; 0; 0; 0
+084; Jose Muñoz; 77; 37.1; 197; 8; extremidad; 0; 0; 0; 2
+085; Fernanda Chavez; 42; 39.8; 120; 1; otro; 0; 0; 0; 0
+086; Isabella Alvarez; 42; 36.4; 131; 2; cabeza; 0; 0; 0; 1
+087; Valeria Mendoza; 84; 37.0; 138; 6; abdomen; 1; 0; 1; 2
+088; Daniela Ruiz; 86; 36.7; 150; 1; extremidad; 0; 0; 0; 3
+089; Gloria Valdez; 60; 36.6; 137; 1; abdomen; 0; 0; 0; 0
+090; Mario Romero; 22; 36.3; 121; 7; otro; 1; 0; 0; 2
+091; Maria Martinez; 56; 36.6; 133; 6; otro; 0; 1; 0; 3
+092; Roberto Fuentes; 34; 37.2; 200; 8; extremidad; 0; 0; 0; 3
+093; Daniela Ruiz; 4; 36.3; 158; 5; pecho; 0; 0; 0; 3
+094; Roberto Diaz; 59; 36.0; 139; 5; extremidad; 1; 0; 0; 0
+095; Rosa Muñoz; 51; 37.1; 136; 1; extremidad; 0; 0; 0; 1
+096; Laura Navarro; 26; 36.5; 140; 8; pecho; 0; 0; 0; 3
+097; Beatriz Ramirez; 39; 36.7; 131; 6; abdomen; 1; 0; 1; 2
+098; Beatriz Delgado; 46; 36.8; 119; 8; cabeza; 0; 1; 0; 4
+099; Maria Rivas; 83; 37.3; 149; 7; abdomen; 1; 0; 1; 2
+100; Victoria Alvarez; 39; 36.1; 116; 7; cabeza; 0; 1; 0; 0
