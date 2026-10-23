@@ -1,19 +1,33 @@
-# Taller 2 - Estructura de Datos
+# Taller 2 — Hospital Marmaja
 
-Hospital Marmaja. Proyecto en desarrollo para extender el Taller 1 con un arbol de decision y un AVL por servicio.
+Extensión del Taller 1 en C++: clasificar pacientes mediante un árbol de decisión y almacenarlos en un AVL por servicio. Las estructuras se implementan manualmente.
 
 ## Integrantes
 
 | Nombre | RUT | GitHub | Carrera | Paralelo |
 | --- | --- | --- | --- | --- |
-| Pedro Segovia | 21672694-4 | Seggov | Ingenieria en Tecnologias de la Informacion | Pendiente |
-| Luis Molina Aguilera | 21.564.225-9 | mixolydiann | Ingenieria en Tecnologias de la Informacion | Pendiente |
+| Pedro Segovia | 21672694-4 | Seggov | Ingeniería en Tecnologías de la Información | Pendiente |
+| Luis Molina Aguilera | 21.564.225-9 | mixolydiann | Ingeniería en Tecnologías de la Información | Pendiente |
 
-Falta completar el paralelo de cada integrante antes de la entrega.
+## Flujo previsto
 
-## Compilacion y ejecucion
+```mermaid
+flowchart LR
+    A["Archivo de pacientes"] --> B["Cola manual · FIFO"]
+    B --> C["Árbol de decisión"]
+    C --> D["Servicio asignado · 0 a 7"]
+    D --> E["AVL del servicio<br/>Clave: ID"]
+```
 
-Ejecutar desde la carpeta raiz del taller. Se requiere un compilador de C++17.
+`Hospital` coordina el procesamiento en orden de llegada. Cada servicio tendrá su propio AVL, ordenado por ID.
+
+**Implementado:** lectura y validación de pacientes, cola FIFO, búsqueda por ID o nombre y menú. El AVL tiene nodo, constructor, destructor y consultas básicas.
+
+**Pendiente:** árbol de decisión y justificación de sus reglas; operaciones e integración de los AVL; pruebas en Codespaces y completar paralelos. Por ahora, atender conserva los pacientes sin clasificar en la cola y muestra un aviso.
+
+## Compilación y ejecución
+
+Desde la raíz del taller, con g++ y C++17:
 
 En Linux o Codespaces:
 
@@ -29,57 +43,33 @@ g++ -std=c++17 -Wall -Wextra -Wpedantic src/Main.cpp src/Persona.cpp src/Pacient
 .\hospital.exe
 ```
 
-La ejecucion en Codespaces debe comprobarse antes de entregar.
-
 ## Archivo de pacientes
 
-El programa carga `data/data.txt`. Cada registro tiene exactamente once campos separados por punto y coma:
+Se carga `data/data.txt`: once campos separados por `;`, cabecera opcional y decimales con punto. El servicio no viene en el archivo.
 
 ```text
 ID;Nombre;Edad;Temperatura;PresionArterial;Dolor;TipoDolor;Trauma;SintomasNeurologicos;RequiereCirugia;DiasHospitalizacion
 001;Juan Perez;25;37.0;174;3;otro;0;0;0;0
 ```
 
-La cabecera es opcional. El servicio se asignara despues de evaluar al paciente con el arbol de decision.
+- **Identificación:** ID y nombre obligatorios; el ID conserva sus ceros iniciales.
+- **Valores numéricos:** edad entera de 0 a 130, temperatura positiva y finita, presión sistólica entera positiva, dolor entero de 0 a 10 y días de hospitalización enteros no negativos.
+- **Tipo de dolor:** `pecho`, `cabeza`, `abdomen`, `extremidad` u `otro`. Trauma, síntomas neurológicos y cirugía aceptan exactamente `0` o `1`.
+- **Errores:** se informa si el archivo no existe. Los registros inválidos o duplicados se omiten indicando línea y motivo; se conserva el primer registro válido de cada ID.
 
-Reglas de carga:
+## Servicios
 
-- ID y nombre obligatorios. El ID se conserva como texto, incluidos sus ceros iniciales.
-- Edad entera entre 0 y 130.
-- Temperatura positiva y finita. Los decimales se escriben con punto.
-- Presion arterial: presion sistolica representada por un entero positivo.
-- Dolor entero entre 0 y 10.
-- Tipo de dolor: pecho, cabeza, abdomen, extremidad u otro.
-- Trauma, sintomas neurologicos y requiere cirugia: exactamente `0` o `1`.
-- Dias de hospitalizacion: entero no negativo.
-- Los IDs duplicados en la cola o los servicios se rechazan. Se conserva el primer registro valido.
-- Las lineas invalidas se omiten indicando numero de linea y motivo; la lectura continua.
+El clasificador devolverá un código para que `Hospital` seleccione el servicio y su AVL:
 
-## Codigos de los servicios
-
-El clasificador debera devolver uno de estos codigos. `Hospital` lo utilizara para seleccionar el servicio y su AVL:
-
-| Codigo | Servicio |
+| Código | Servicio |
 | --- | --- |
 | 0 | Urgencias |
 | 1 | Medicina General |
-| 2 | Cardiologia |
-| 3 | Neurologia |
-| 4 | Traumatologia |
-| 5 | Cirugia |
-| 6 | Pediatria |
-| 7 | Hospitalizacion |
+| 2 | Cardiología |
+| 3 | Neurología |
+| 4 | Traumatología |
+| 5 | Cirugía |
+| 6 | Pediatría |
+| 7 | Hospitalización |
 
-Este orden corresponde al catalogo de `Hospital`. La seleccion actual de departamentos en el menu utiliza posiciones de 1 a 8.
-
-## Estado actual
-
-- Lectura de los once campos, validacion y carga en una cola manual FIFO.
-- Consulta de pacientes por ID o nombre.
-- Metodo `setServicio()` disponible para asignar el resultado de la clasificacion.
-- Nodo y estructura base del AVL, con destructor y consultas de vacio, cantidad y altura.
-- Menu de cuatro opciones: atender, ver departamentos, buscar y salir.
-
-La clasificacion y las operaciones del AVL estan pendientes. Hasta conectar el clasificador, los pacientes permanecen en espera al intentar atenderlos.
-
-Falta implementar y documentar el arbol de decision, sus prioridades y casos de prueba; completar el AVL y su integracion; y verificar el funcionamiento y la memoria en Codespaces.
+Los códigos internos son `0–7`; la selección de departamentos en el menú usa posiciones `1–8`.
