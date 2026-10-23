@@ -6,8 +6,8 @@ Extensión del Taller 1 en C++: clasificar pacientes mediante un árbol de decis
 
 | Nombre | RUT | GitHub | Carrera | Paralelo |
 | --- | --- | --- | --- | --- |
-| Pedro Segovia | 21672694-4 | Seggov | Ingeniería en Tecnologías de la Información | Pendiente |
-| Luis Molina Aguilera | 21.564.225-9 | mixolydiann | Ingeniería en Tecnologías de la Información | Pendiente |
+| Pedro Segovia | 21672694-4 | Seggov | Ingeniería en Tecnologías de la Información | C2 |
+| Luis Molina Aguilera | 21.564.225-9 | mixolydiann | Ingeniería en Tecnologías de la Información | C2 |
 
 ## Flujo previsto
 
