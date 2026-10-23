@@ -1,4 +1,4 @@
-001; Juan Perez; 25; 37.0; 174; 7; otro; 0; 0; 0; 0
+001; Juan Perez; 25; 37.0; 174; 3; otro; 0; 0; 0; 0
 002; Oscar Cruz; 20; 36.4; 121; 0; otro; 0; 0; 0; 3
 003; Ricardo Romero; 10; 36.4; 93; 4; otro; 0; 1; 0; 1
 004; Gabriel Mendez; 74; 36.4; 141; 6; cabeza; 0; 1; 0; 4

@@ -6,19 +6,38 @@
 // clase paciente que hereda de persona
 class Paciente : public Persona {
 private:
-    // departamento asignado
-    string servicio;
+    string servicio; // servicio ahora deberá ser asignado post arbolin
+    double temperatura; 
+    int presionArterial;
+    int dolor;
+    string tipoDolor;
+    int trauma;
+    int sintomasNeurologicos;
+    int requiereCirugia;
+    int diasHospitalizacion;
+
 
 public:
     // constructores
     Paciente();
-    Paciente(string id, string nombre, int edad, string servicio);
+    Paciente(string id, string nombre, int edad, double temperatura, int presionArterial,
+    int dolor,string tipoDolor, int trauma, int sintomasNeurologicos, int requiereCirugia, int diasHospitalizacion);
 
     // destructor
     virtual ~Paciente() override;
 
-    // get servicio
+    // info
+    void setServicio(string service);
     string getServicio() const;
+    double getTemperatura() const;
+    int getPresionArterial() const;
+    int getDolor() const;
+    string getTipoDolor() const;
+    int getTrauma() const;
+    int getSintomasNeurologicos() const;
+    int getRequiereCirugia() const;
+    int getDiasHospitalizacion() const;
+
 
     // sobreescritura de mostrar
     void mostrar() const override;
