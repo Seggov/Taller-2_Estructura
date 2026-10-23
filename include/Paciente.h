@@ -6,6 +6,16 @@
 // clase paciente que hereda de persona
 class Paciente : public Persona {
 private:
+    // datos para la clasificacion
+    double temperatura;
+    int presionArterial;
+    int dolor;
+    string tipoDolor;
+    bool trauma;
+    bool sintomasNeurologicos;
+    bool requiereCirugia;
+    int diasHospitalizacion;
+
     // departamento asignado
     string servicio;
 
@@ -13,9 +23,22 @@ public:
     // constructores
     Paciente();
     Paciente(string id, string nombre, int edad, string servicio);
+    Paciente(string id, string nombre, int edad, double temperatura,
+             int presionArterial, int dolor, string tipoDolor, bool trauma,
+             bool sintomasNeurologicos, bool requiereCirugia, int diasHospitalizacion);
 
     // destructor
     virtual ~Paciente() override;
+
+    // getters de los datos clinicos
+    double getTemperatura() const;
+    int getPresionArterial() const;
+    int getDolor() const;
+    string getTipoDolor() const;
+    bool getTrauma() const;
+    bool getSintomasNeurologicos() const;
+    bool getRequiereCirugia() const;
+    int getDiasHospitalizacion() const;
 
     // get servicio
     string getServicio() const;

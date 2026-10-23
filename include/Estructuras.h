@@ -40,6 +40,9 @@ public:
     bool dequeue(Paciente& p);
     bool desencolar(Paciente& p) { return dequeue(p); }
 
+    // consulta el frente sin sacarlo
+    bool consultarFrente(Paciente& p) const;
+
     // funciones basicas
     bool isEmpty() const;
     int size() const;

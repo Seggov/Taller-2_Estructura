@@ -24,7 +24,7 @@ private:
     // metodos con aritmetica de punteros
     void inicializarServicios();
     bool esServicioValido(string servLeido, string& servOficial) const;
-    bool parsearLinea(string linea, string& id, string& nombre, int& edad, string& serv) const;
+    bool parsearLinea(string linea, Paciente& paciente) const;
 
 public:
     Hospital();

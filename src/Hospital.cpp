@@ -1,6 +1,7 @@
 #include "../include/Hospital.h"
 #include <fstream>
 #include <cctype>
+#include <cmath>
 
 // limpia texto para comparar
 static string limpiar(string s) {
@@ -19,6 +20,28 @@ static string limpiar(string s) {
         else if (c != ' ' && c != '\t' && c != '\r' && c != '\n') res += (char)c;
     }
     return res;
+}
+
+// convierte el campo completo a entero
+static bool convertirEntero(string texto, int& valor) {
+    try {
+        size_t posicion = 0;
+        valor = stoi(texto, &posicion);
+        return posicion == texto.length();
+    } catch (...) {
+        return false;
+    }
+}
+
+// convierte el campo completo a decimal
+static bool convertirDecimal(string texto, double& valor) {
+    try {
+        size_t posicion = 0;
+        valor = stod(texto, &posicion);
+        return posicion == texto.length() && std::isfinite(valor);
+    } catch (...) {
+        return false;
+    }
 }
 
 // constructor
@@ -60,20 +83,14 @@ bool Hospital::esServicioValido(string servLeido, string& servOficial) const {
 }
 
 // metodo para separar la linea con punteros
-bool Hospital::parsearLinea(string linea, string& id, string& nombre, int& edad, string& serv) const {
+bool Hospital::parsearLinea(string linea, Paciente& paciente) const {
     if (linea.empty()) return false;
 
     const char* ptr = linea.c_str();
-    string tokens[4];
-    int tokenIdx = 0;
+    const int TOTAL_CAMPOS = 11;
+    string tokens[TOTAL_CAMPOS];
 
-    while (*ptr != '\0' && tokenIdx < 4) {
-        // salta espacios
-        while (*ptr == ' ' || *ptr == '\t' || *ptr == '\r') {
-            ptr++;
-        }
-        if (*ptr == '\0') break;
-
+    for (int i = 0; i < TOTAL_CAMPOS; i++) {
         const char* inicioToken = ptr;
 
         // avanza hasta el separador
@@ -81,35 +98,62 @@ bool Hospital::parsearLinea(string linea, string& id, string& nombre, int& edad,
             ptr++;
         }
 
-        // retrocede espacios
-        const char* finToken = ptr - 1;
-        while (finToken >= inicioToken && (*finToken == ' ' || *finToken == '\t' || *finToken == '\r')) {
+        // quita los espacios de los extremos
+        const char* finToken = ptr;
+        while (inicioToken < finToken &&
+               (*inicioToken == ' ' || *inicioToken == '\t' || *inicioToken == '\r')) {
+            inicioToken++;
+        }
+        while (finToken > inicioToken &&
+               (*(finToken - 1) == ' ' || *(finToken - 1) == '\t' || *(finToken - 1) == '\r')) {
             finToken--;
         }
 
-        if (finToken >= inicioToken) {
-            tokens[tokenIdx] = string(inicioToken, finToken - inicioToken + 1);
-        }
-        tokenIdx++;
+        if (inicioToken == finToken) return false;
+        tokens[i] = string(inicioToken, finToken - inicioToken);
 
-        if (*ptr == ';') {
+        // revisa que existan exactamente once campos
+        if (i < TOTAL_CAMPOS - 1) {
+            if (*ptr != ';') return false;
             ptr++;
+        } else if (*ptr != '\0') {
+            return false;
         }
     }
 
-    if (tokenIdx < 4 || tokens[0].empty() || tokens[1].empty() || tokens[2].empty() || tokens[3].empty()) {
+    int edad = 0, presion = 0, dolor = 0, dias = 0;
+    double temperatura = 0;
+
+    // convierte los datos numericos
+    if (!convertirEntero(tokens[2], edad) ||
+        !convertirDecimal(tokens[3], temperatura) ||
+        !convertirEntero(tokens[4], presion) ||
+        !convertirEntero(tokens[5], dolor) ||
+        !convertirEntero(tokens[10], dias)) {
         return false;
     }
 
-    id = tokens[0];
-    nombre = tokens[1];
-    try {
-        edad = stoi(tokens[2]);
-        if (edad < 0 || edad > 130) return false;
-    } catch (...) {
+    // valida los rangos
+    if (edad < 0 || edad > 130 || temperatura <= 0 || presion <= 0 ||
+        dolor < 0 || dolor > 10 || dias < 0) {
         return false;
     }
-    serv = tokens[3];
+
+    // valida los campos que solo reciben cero o uno
+    for (int i = 7; i <= 9; i++) {
+        if (tokens[i] != "0" && tokens[i] != "1") return false;
+    }
+
+    // valida el tipo de dolor
+    string tipoDolor = limpiar(tokens[6]);
+    if (tipoDolor != "pecho" && tipoDolor != "cabeza" && tipoDolor != "abdomen" &&
+        tipoDolor != "extremidad" && tipoDolor != "otro") {
+        return false;
+    }
+
+    // crea el paciente sin asignar un servicio
+    paciente = Paciente(tokens[0], tokens[1], edad, temperatura, presion, dolor,
+                        tipoDolor, tokens[7] == "1", tokens[8] == "1", tokens[9] == "1", dias);
     return true;
 }
 
@@ -126,28 +170,46 @@ bool Hospital::cargarPacientes(string ruta) {
 
     string linea;
     int cargados = 0;
+    int rechazados = 0;
+    int numeroLinea = 0;
 
     while (getline(archivo, linea)) {
-        if (linea.empty()) continue;
+        numeroLinea++;
 
-        string id, nombre, serv, servOficial;
-        int edad = 0;
+        // quita la marca utf8 si viene al inicio
+        if (numeroLinea == 1 && linea.compare(0, 3, "\xEF\xBB\xBF") == 0) {
+            linea.erase(0, 3);
+        }
+        if (limpiar(linea).empty()) continue;
 
-        if (!parsearLinea(linea, id, nombre, edad, serv)) continue;
-        if (!esServicioValido(serv, servOficial)) continue;
+        // salta la cabecera si viene en el archivo
+        if (limpiar(linea) == "id;nombre;edad;temperatura;presionarterial;dolor;"
+                              "tipodolor;trauma;sintomasneurologicos;requierecirugia;diashospitalizacion") {
+            continue;
+        }
 
-        // si ya existe
-        if (colaEspera.existe(id) || servicios.existePaciente(id)) continue;
+        Paciente p;
+        if (!parsearLinea(linea, p)) {
+            cout << "[ERROR] Linea " << numeroLinea << ": datos del paciente no validos." << endl;
+            rechazados++;
+            continue;
+        }
 
-        Paciente p(id, nombre, edad, servOficial);
+        // revisa si ya existe el id
+        if (colaEspera.existe(p.getId()) || servicios.existePaciente(p.getId())) {
+            cout << "[ERROR] Linea " << numeroLinea << ": ID repetido " << p.getId() << "." << endl;
+            rechazados++;
+            continue;
+        }
+
         colaEspera.enqueue(p);
         cargados++;
     }
 
     archivo.close();
     cout << "-> Pacientes cargados en cola: " << cargados << endl;
+    if (rechazados > 0) cout << "-> Registros rechazados: " << rechazados << endl;
     return cargados > 0;
-    // si no null
 }
 
 // out para la cola
@@ -168,6 +230,14 @@ void Hospital::atenderPacientes(int cantidad) {
 
     while (atendidos < cantidad && !colaEspera.isEmpty()) {
         Paciente p;
+        if (!colaEspera.consultarFrente(p)) break;
+
+        // mantiene al paciente en cola hasta conectar el clasificador
+        if (p.getServicio().empty()) {
+            cout << "[AVISO] Los pacientes aun no tienen un servicio asignado. Siguen en espera." << endl;
+            break;
+        }
+
         if (colaEspera.dequeue(p)) {
             // deriva al servicio
             servicios.agregarPacienteAServicio(p.getServicio(), p);
@@ -218,15 +288,15 @@ void Hospital::buscarPaciente(string criterio) const {
 
     Paciente p;
     if (colaEspera.buscar(criterio, p)) {
-        cout << "[EN COLA DE ESPERA] ID: " << p.getId() << " | Nombre: " << p.getNombre()
-             << " | Edad: " << p.getEdad() << " | Servicio: " << p.getServicio() << endl;
+        cout << "[EN COLA DE ESPERA]" << endl;
+        p.mostrar();
         return;
     }
 
     string serv;
     if (servicios.buscarPaciente(criterio, p, serv)) {
-        cout << "[ATENDIDO EN: " << serv << "] ID: " << p.getId()
-             << " | Nombre: " << p.getNombre() << " | Edad: " << p.getEdad() << endl;
+        cout << "[ATENDIDO EN: " << serv << "]" << endl;
+        p.mostrar();
         return;
     }
 

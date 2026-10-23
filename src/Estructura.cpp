@@ -40,6 +40,13 @@ bool ColaPacientes::dequeue(Paciente& p) {
     return true;
 }
 
+// consulta el frente sin sacarlo
+bool ColaPacientes::consultarFrente(Paciente& p) const {
+    if (isEmpty()) return false;
+    p = front->dato;
+    return true;
+}
+
 // revisa si esta vacia
 bool ColaPacientes::isEmpty() const {
     return front == nullptr;
