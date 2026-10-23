@@ -28,6 +28,9 @@ private:
     // libera los nodos del arbol
     void liberar(NodoAVL* nodo);
 
+    // inserta en el subarbol y devuelve su raiz
+    NodoAVL* insertarNodo(NodoAVL* nodo, const Paciente& paciente, bool& insertado);
+
 public:
     // constructor y destructor
     ArbolAVL();
@@ -41,6 +44,12 @@ public:
     bool isEmpty() const;
     int size() const;
     int obtenerAltura() const;
+
+    // inserta por id y rechaza duplicados
+    bool insertar(const Paciente& paciente);
+
+    // busca por id y copia el paciente encontrado
+    bool buscarPorId(string id, Paciente& encontrado) const;
 };
 
 #endif
