@@ -23,7 +23,6 @@ int main() {
     while (!esTerminado) {
         menu();
         int user_selector = selector();
-        // a,b,c,d - d
         switch (user_selector) {
             // opcion atender
             case 1: {
@@ -45,9 +44,12 @@ int main() {
                 break;
             }
 
-            // opcion revisar historial
+            // opcion buscar
             case 3: {
-                hospital.mostrarHistorial();
+                cout << "\nIngrese el ID o Nombre a buscar: ";
+                string criterio;
+                getline(cin, criterio);
+                hospital.buscarPaciente(criterio);
                 break;
             }
 
@@ -55,15 +57,6 @@ int main() {
             case 4: {
                 cout << "\nHasta luego :D." << endl;
                 esTerminado = true;
-                break;
-            }
-
-            // opcion buscar
-            case 5: {
-                cout << "\nIngrese el ID o Nombre a buscar: ";
-                string criterio;
-                getline(cin, criterio);
-                hospital.buscarPaciente(criterio);
                 break;
             }
 
@@ -84,9 +77,8 @@ void menu() {
     cout << "\n=== HOSPITAL MARMAJA ===" << endl;
     cout << "1. Atender pacientes" << endl;
     cout << "2. Ver departamento" << endl;
-    cout << "3. Revisar historial de atencion" << endl;
+    cout << "3. Buscar paciente" << endl;
     cout << "4. Salir" << endl;
-    cout << "5. Buscar paciente" << endl;
 }
 
 
