@@ -83,12 +83,21 @@ bool Hospital::esServicioValido(string servLeido, string& servOficial) const {
 }
 
 // metodo para separar la linea con punteros
-bool Hospital::parsearLinea(string linea, Paciente& paciente) const {
-    if (linea.empty()) return false;
+bool Hospital::parsearLinea(string linea, Paciente& paciente, string& motivo) const {
+    motivo = "";
+    if (linea.empty()) {
+        motivo = "linea vacia";
+        return false;
+    }
 
     const char* ptr = linea.c_str();
     const int TOTAL_CAMPOS = 11;
     string tokens[TOTAL_CAMPOS];
+    const string nombresCampos[TOTAL_CAMPOS] = {
+        "ID", "nombre", "edad", "temperatura", "presion arterial", "dolor",
+        "tipo de dolor", "trauma", "sintomas neurologicos", "requiere cirugia",
+        "dias de hospitalizacion"
+    };
 
     for (int i = 0; i < TOTAL_CAMPOS; i++) {
         const char* inicioToken = ptr;
@@ -109,14 +118,21 @@ bool Hospital::parsearLinea(string linea, Paciente& paciente) const {
             finToken--;
         }
 
-        if (inicioToken == finToken) return false;
+        if (inicioToken == finToken) {
+            motivo = "campo vacio: " + nombresCampos[i];
+            return false;
+        }
         tokens[i] = string(inicioToken, finToken - inicioToken);
 
         // revisa que existan exactamente once campos
         if (i < TOTAL_CAMPOS - 1) {
-            if (*ptr != ';') return false;
+            if (*ptr != ';') {
+                motivo = "tiene " + to_string(i + 1) + " campos, se esperaban " + to_string(TOTAL_CAMPOS);
+                return false;
+            }
             ptr++;
         } else if (*ptr != '\0') {
+            motivo = "tiene mas de " + to_string(TOTAL_CAMPOS) + " campos";
             return false;
         }
     }
@@ -124,30 +140,42 @@ bool Hospital::parsearLinea(string linea, Paciente& paciente) const {
     int edad = 0, presion = 0, dolor = 0, dias = 0;
     double temperatura = 0;
 
-    // convierte los datos numericos
-    if (!convertirEntero(tokens[2], edad) ||
-        !convertirDecimal(tokens[3], temperatura) ||
-        !convertirEntero(tokens[4], presion) ||
-        !convertirEntero(tokens[5], dolor) ||
-        !convertirEntero(tokens[10], dias)) {
+    // convierte y valida cada dato numerico
+    if (!convertirEntero(tokens[2], edad) || edad < 0 || edad > 130) {
+        motivo = "edad invalida (" + tokens[2] + "), rango 0-130";
+        return false;
+    }
+    if (!convertirDecimal(tokens[3], temperatura) || temperatura <= 0) {
+        motivo = "temperatura invalida (" + tokens[3] + "), debe ser un numero positivo con punto decimal";
+        return false;
+    }
+    if (!convertirEntero(tokens[4], presion) || presion <= 0) {
+        motivo = "presion arterial invalida (" + tokens[4] + "), debe ser un entero positivo";
+        return false;
+    }
+    if (!convertirEntero(tokens[5], dolor) || dolor < 0 || dolor > 10) {
+        motivo = "dolor invalido (" + tokens[5] + "), rango 0-10";
         return false;
     }
 
-    // valida los rangos
-    if (edad < 0 || edad > 130 || temperatura <= 0 || presion <= 0 ||
-        dolor < 0 || dolor > 10 || dias < 0) {
+    if (!convertirEntero(tokens[10], dias) || dias < 0) {
+        motivo = "dias de hospitalizacion invalidos (" + tokens[10] + "), deben ser un entero no negativo";
         return false;
     }
 
     // valida los campos que solo reciben cero o uno
     for (int i = 7; i <= 9; i++) {
-        if (tokens[i] != "0" && tokens[i] != "1") return false;
+        if (tokens[i] != "0" && tokens[i] != "1") {
+            motivo = nombresCampos[i] + " debe ser 0 o 1 (" + tokens[i] + ")";
+            return false;
+        }
     }
 
     // valida el tipo de dolor
     string tipoDolor = limpiar(tokens[6]);
     if (tipoDolor != "pecho" && tipoDolor != "cabeza" && tipoDolor != "abdomen" &&
         tipoDolor != "extremidad" && tipoDolor != "otro") {
+        motivo = "tipo de dolor desconocido (" + tokens[6] + ")";
         return false;
     }
 
@@ -189,8 +217,9 @@ bool Hospital::cargarPacientes(string ruta) {
         }
 
         Paciente p;
-        if (!parsearLinea(linea, p)) {
-            cout << "[ERROR] Linea " << numeroLinea << ": datos del paciente no validos." << endl;
+        string motivo;
+        if (!parsearLinea(linea, p, motivo)) {
+            cout << "[ERROR] Linea " << numeroLinea << ": " << motivo << endl;
             rechazados++;
             continue;
         }

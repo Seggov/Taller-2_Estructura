@@ -43,6 +43,9 @@ public:
     // get servicio
     string getServicio() const;
 
+    // asigna el servicio despues de clasificar
+    void setServicio(string servicio);
+
     // sobreescritura de mostrar
     void mostrar() const override;
 

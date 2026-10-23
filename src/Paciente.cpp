@@ -69,6 +69,11 @@ string Paciente::getServicio() const {
     return servicio;
 }
 
+// asigna el servicio despues de clasificar
+void Paciente::setServicio(string servicio) {
+    this->servicio = servicio;
+}
+
 // muestra los datos completos
 void Paciente::mostrar() const {
     cout << "[" << id << "] " << nombre << " | " << edad << " anios | ";

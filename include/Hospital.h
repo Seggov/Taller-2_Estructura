@@ -8,6 +8,8 @@
 using namespace std;
 
 // total de departamentos
+// 0 urgencias, 1 medicina general, 2 cardiologia, 3 neurologia
+// 4 traumatologia, 5 cirugia, 6 pediatria, 7 hospitalizacion
 const int TOTAL_SERVICIOS = 8;
 
 // clase que controla todo el hospital
@@ -24,7 +26,7 @@ private:
     // metodos con aritmetica de punteros
     void inicializarServicios();
     bool esServicioValido(string servLeido, string& servOficial) const;
-    bool parsearLinea(string linea, Paciente& paciente) const;
+    bool parsearLinea(string linea, Paciente& paciente, string& motivo) const;
 
 public:
     Hospital();
