@@ -297,7 +297,7 @@ void Hospital::mostrarEstadoDepartamento(int indice) const {
 
         cout << "\n=== ESTADO " << nomMayus << " ===" << endl;
         cout << "Pacientes en el departamento de " << nodo->nombre << ": " << nodo->pacientes.size() << endl;
-        nodo->pacientes.mostrar();
+        nodo->pacientes.mostrarInorden();
     } else {
         cout << "\n[ERROR] Departamento no valido." << endl;
     }
