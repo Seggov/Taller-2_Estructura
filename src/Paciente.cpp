@@ -1,45 +1,90 @@
 #include "../include/Paciente.h"
 
-// constructor vacio que llama al padre // para evitar el caso de que se imprima comienza todo en 0 o ""
+// constructor vacio que llama al padre
 Paciente::Paciente()
-    : Persona(), servicio(""), temperatura(0.0), presionArterial(0), dolor(0),
-      tipoDolor(""), trauma(0), sintomasNeurologicos(0), requiereCirugia(0),
-      diasHospitalizacion(0) {}
+    : Persona(), temperatura(0), presionArterial(0), dolor(0), tipoDolor("otro"),
+      trauma(false), sintomasNeurologicos(false), requiereCirugia(false),
+      diasHospitalizacion(0), servicio("") {}
 
 // constructor con datos llamando a persona
-Paciente::Paciente(string id, string nombre, int edad, double temperatura, int presionArterial, int dolor,
-     string tipoDolor, int trauma, int sintomasNeurologicos, int requiereCirugia, int diasHospitalizacion) 
-    : Persona(id, nombre, edad) {
-    this->temperatura = temperatura;
-    this->presionArterial = presionArterial;
-    this->dolor = dolor;
-    this->tipoDolor = tipoDolor;
-    this->trauma = trauma;
-    this->sintomasNeurologicos = sintomasNeurologicos;
-    this->requiereCirugia = requiereCirugia;
-    this->diasHospitalizacion = diasHospitalizacion;
-}
-//int
+Paciente::Paciente(string id, string nombre, int edad, string servicio)
+    : Persona(id, nombre, edad), temperatura(0), presionArterial(0), dolor(0),
+      tipoDolor("otro"), trauma(false), sintomasNeurologicos(false),
+      requiereCirugia(false), diasHospitalizacion(0), servicio(servicio) {}
+
+// constructor con los datos del archivo nuevo
+Paciente::Paciente(string id, string nombre, int edad, double temperatura,
+                   int presionArterial, int dolor, string tipoDolor, bool trauma,
+                   bool sintomasNeurologicos, bool requiereCirugia, int diasHospitalizacion)
+    : Persona(id, nombre, edad), temperatura(temperatura), presionArterial(presionArterial),
+      dolor(dolor), tipoDolor(tipoDolor), trauma(trauma),
+      sintomasNeurologicos(sintomasNeurologicos), requiereCirugia(requiereCirugia),
+      diasHospitalizacion(diasHospitalizacion), servicio("") {}
+
 // destructor
 Paciente::~Paciente() {}
 
-// getters
+// devuelve la temperatura
+double Paciente::getTemperatura() const {
+    return temperatura;
+}
+
+// devuelve la presion arterial
+int Paciente::getPresionArterial() const {
+    return presionArterial;
+}
+
+// devuelve el nivel de dolor
+int Paciente::getDolor() const {
+    return dolor;
+}
+
+// devuelve el tipo de dolor
+string Paciente::getTipoDolor() const {
+    return tipoDolor;
+}
+
+// revisa si tiene trauma
+bool Paciente::getTrauma() const {
+    return trauma;
+}
+
+// revisa si tiene sintomas neurologicos
+bool Paciente::getSintomasNeurologicos() const {
+    return sintomasNeurologicos;
+}
+
+// revisa si requiere cirugia
+bool Paciente::getRequiereCirugia() const {
+    return requiereCirugia;
+}
+
+// devuelve los dias de hospitalizacion
+int Paciente::getDiasHospitalizacion() const {
+    return diasHospitalizacion;
+}
+
+// devuelve el servicio
 string Paciente::getServicio() const {
     return servicio;
 }
-void Paciente::setServicio(string service) {this->servicio = service;}
-double Paciente::getTemperatura() const {return temperatura;}
-int Paciente::getPresionArterial() const {return presionArterial;}
-int Paciente::getDolor() const {return dolor;}
-string Paciente::getTipoDolor() const {return tipoDolor;}
-int Paciente::getTrauma() const {return trauma;}
-int Paciente::getSintomasNeurologicos() const {return sintomasNeurologicos;}
-int Paciente::getRequiereCirugia() const {return requiereCirugia;}
-int Paciente::getDiasHospitalizacion() const {return diasHospitalizacion;}
+
+// asigna el servicio despues de clasificar
+void Paciente::setServicio(string servicio) {
+    this->servicio = servicio;
+}
 
 // muestra los datos completos
 void Paciente::mostrar() const {
-    cout << "[" << id << "] " << nombre << " | " << edad << " anios | " << servicio << endl;
+    cout << "[" << id << "] " << nombre << " | " << edad << " anios | ";
+    if (servicio.empty()) cout << "Pendiente de clasificacion";
+    else cout << servicio;
+    cout << endl;
+
+    cout << "T: " << temperatura << " | PA: " << presionArterial
+         << " | D: " << dolor << " | TD: " << tipoDolor
+         << " | Trauma: " << trauma << " | SN: " << sintomasNeurologicos
+         << " | RC: " << requiereCirugia << " | DH: " << diasHospitalizacion << endl;
 }
 
 // out para la cola de espera
@@ -53,13 +98,19 @@ void Paciente::mostrarEnAtencion() const {
     cout << "Nombre: " << nombre << endl;
     cout << "Edad: " << edad << endl;
     cout << "Temperatura: " << temperatura << endl;
+    cout << "Presion arterial: " << presionArterial << endl;
     cout << "Dolor: " << dolor << endl;
-    cout << "TipoDolor: " << tipoDolor << endl;
+    cout << "Tipo de dolor: " << tipoDolor << endl;
     cout << "Trauma: " << trauma << endl;
-    cout << "SintomasNeurologicos: " << sintomasNeurologicos << endl;
-    cout << "RequiereCirugia: " << requiereCirugia << endl;
-    cout << "DiasHospitalizacion: " << diasHospitalizacion << endl;
-    cout << "\nRuta: work in progressss . . ." << endl;
+    cout << "Sintomas neurologicos: " << sintomasNeurologicos << endl;
+    cout << "Requiere cirugia: " << requiereCirugia << endl;
+    cout << "Dias de hospitalizacion: " << diasHospitalizacion << endl;
+    if (servicio.empty()) {
+        cout << "Servicio: Pendiente de clasificacion" << endl;
+        return;
+    }
+    cout << "Servicio: " << servicio << endl;
+    cout << "Paciente enviado a " << servicio << "." << endl;
 }
 
 // out de departamento

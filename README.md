@@ -1,20 +1,77 @@
-# Taller 2 Estructura de datos
+# Taller 2 — Hospital Marmaja
 
-Índices de los servicios
+Extensión del Taller 1 en C++: clasificar pacientes mediante un árbol de decisión y almacenarlos en un AVL por servicio. Las estructuras se implementan manualmente.
 
-Los servicios se mantienen respecto al Taller 1. El árbol de decisión retorna un entero que identifica el departamento, y ese mismo entero se usa para ubicar el AVL correspondiente:
+## Integrantes
 
-Índice	Servicio
-0	-  Urgencias
-1	-  Medicina General
-2	-  Cardiologia
-3	-  Neurologia
-4	-  Traumatologia
-5	-  Cirugia
-6	-  Pediatria
-7	-  Hospitalizacion
+| Nombre | RUT | GitHub | Carrera | Paralelo |
+| --- | --- | --- | --- | --- |
+| Pedro Segovia | 21672694-4 | Seggov | Ingeniería en Tecnologías de la Información | C2 |
+| Luis Molina Aguilera | 21.564.225-9 | mixolydiann | Ingeniería en Tecnologías de la Información | C2 |
 
-El orden igual esta en los comentarios de Hospital.h.
+## Flujo previsto
 
-> Todavía no saco las funciones que no hacen nada como la del historial
-> hay que implementar bien las busquedas (los pacientes aun no se derivan xq no hay arbolito)
+```mermaid
+flowchart LR
+    A["Archivo de pacientes"] --> B["Cola manual · FIFO"]
+    B --> C["Árbol de decisión"]
+    C --> D["Servicio asignado · 0 a 7"]
+    D --> E["AVL del servicio<br/>Clave: ID"]
+```
+
+`Hospital` coordina el procesamiento en orden de llegada. Cada servicio mantiene su propio AVL, ordenado por ID.
+
+Los AVL permiten insertar y eliminar pacientes, buscar por ID o nombre, mostrar recorridos y consultar altura y balance. El menú permite atender, ver departamentos y buscar.
+
+Los IDs repetidos o servicios inválidos se informan y descartan sin registrar una atención.
+
+**Pruebas locales:** rotaciones, búsquedas y eliminación verificadas. El seguimiento temporal de `new/delete` confirmó la liberación de los nodos de AVL, cola, servicios e historial.
+
+## Compilación y ejecución
+
+Desde la raíz del taller, con g++ y C++17:
+
+En Linux o Codespaces:
+
+```sh
+g++ -std=c++17 -Wall -Wextra -Wpedantic src/*.cpp -o hospital
+./hospital
+```
+
+En Windows con g++:
+
+```powershell
+g++ -std=c++17 -Wall -Wextra -Wpedantic src/Main.cpp src/Persona.cpp src/Paciente.cpp src/Hospital.cpp src/Estructura.cpp src/ArbolAVL.cpp -o hospital.exe
+.\hospital.exe
+```
+
+## Archivo de pacientes
+
+Se carga `data/data.txt`: once campos separados por `;`, cabecera opcional y decimales con punto. El servicio no viene en el archivo.
+
+```text
+ID;Nombre;Edad;Temperatura;PresionArterial;Dolor;TipoDolor;Trauma;SintomasNeurologicos;RequiereCirugia;DiasHospitalizacion
+001;Juan Perez;25;37.0;174;3;otro;0;0;0;0
+```
+
+- **Identificación:** ID y nombre obligatorios; el ID conserva sus ceros iniciales.
+- **Valores numéricos:** edad entera de 0 a 130, temperatura positiva y finita, presión sistólica entera positiva, dolor entero de 0 a 10 y días de hospitalización enteros no negativos.
+- **Tipo de dolor:** `pecho`, `cabeza`, `abdomen`, `extremidad` u `otro`. Trauma, síntomas neurológicos y cirugía aceptan exactamente `0` o `1`.
+- **Errores:** se informa si el archivo no existe. Los registros inválidos o duplicados se omiten indicando línea y motivo; se conserva el primer registro válido de cada ID.
+
+## Servicios
+
+El clasificador devolverá un código para que `Hospital` seleccione el servicio y su AVL:
+
+| Código | Servicio |
+| --- | --- |
+| 0 | Urgencias |
+| 1 | Medicina General |
+| 2 | Cardiología |
+| 3 | Neurología |
+| 4 | Traumatología |
+| 5 | Cirugía |
+| 6 | Pediatría |
+| 7 | Hospitalización |
+
+Los códigos internos son `0–7`; la selección de departamentos en el menú usa posiciones `1–8`.

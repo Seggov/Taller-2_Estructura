@@ -23,7 +23,6 @@ int main() {
     while (!esTerminado) {
         menu();
         int user_selector = selector();
-        // a,b,c,d - d
         switch (user_selector) {
             // opcion atender
             case 1: {
@@ -72,6 +71,7 @@ int main() {
     return 0;
 }
 
+
 // inputs para el menu por consola
 void menu() {
     cout << "\n=== HOSPITAL MARMAJA ===" << endl;
@@ -81,12 +81,13 @@ void menu() {
     cout << "4. Salir" << endl;
 }
 
+
 // lee numero evitando errores
 int leerNumero() {
     int valor = 0;
     while (!(cin >> valor)) {
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // inng
         cout << "Entrada invalida. Ingrese un numero: ";
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');

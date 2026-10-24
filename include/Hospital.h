@@ -8,14 +8,9 @@
 using namespace std;
 
 // total de departamentos
-// 0 Urgencias, 1 Medicina General, 2 Cardiologia, 3 Neurologia, 4 Traumatologia, 5 Cirugia, 6 Pediatria, 7 Hospitalizacion
+// 0 urgencias, 1 medicina general, 2 cardiologia, 3 neurologia
+// 4 traumatologia, 5 cirugia, 6 pediatria, 7 hospitalizacion
 const int TOTAL_SERVICIOS = 8;
-
-// cantidad de campos por linea del archivo
-const int NUM_CAMPOS = 11;
-
-// tipos de dolor validos
-const int TOTAL_TIPOS_DOLOR = 5;
 
 // clase que controla todo el hospital
 class Hospital {
@@ -26,18 +21,11 @@ private:
     PilaHistorial historial;
 
     // arreglo para los servicios
-    string nombresServicios[TOTAL_SERVICIOS];   
+    string nombresServicios[TOTAL_SERVICIOS];
 
     // metodos con aritmetica de punteros
-    void inicializarServicios(); // de aqui se saca la lista para encontrar el servicio con la enumeracion del 0-7 para el handshake entre nuestro trabajo independiente
+    void inicializarServicios();
     bool esServicioValido(string servLeido, string& servOficial) const;
-    bool esTipoDolorValido(const string& leido, string& oficial) const;
-
-    // conversion y control de datos invalidos
-    bool convertirEntero(const string& texto, int minimo, int maximo, int& resultado) const;
-    bool convertirDecimal(const string& texto, float minimo, float maximo, float& resultado) const;
-
-    // arma un paciente desde una linea, si falla deja el motivo
     bool parsearLinea(string linea, Paciente& paciente, string& motivo) const;
 
 public:

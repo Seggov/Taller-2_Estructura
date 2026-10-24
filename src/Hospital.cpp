@@ -1,12 +1,47 @@
 #include "../include/Hospital.h"
 #include <fstream>
 #include <cctype>
-#include <stdexcept>   // invalid_argument y out_of_range (excepciones de stoi/stof)
+#include <cmath>
 
-// limpia texto para comparar / reemplazo del metodo anterior 
-static string aMinuscula(string s) {
-    for (char& c : s) c = tolower((unsigned char)c);
-    return s;
+// limpia texto para comparar
+static string limpiar(string s) {
+    string res = "";
+    for (size_t i = 0; i < s.length(); i++) {
+        unsigned char c = (unsigned char)s[i];
+        if (c == 0xC3 && i + 1 < s.length()) {
+            unsigned char next = (unsigned char)s[i + 1];
+            if (next == 0xAD || next == 0x8D) { res += 'i'; i++; continue; }
+            if (next == 0xA1 || next == 0x81) { res += 'a'; i++; continue; }
+            if (next == 0xA9 || next == 0x89) { res += 'e'; i++; continue; }
+            if (next == 0xB3 || next == 0x93) { res += 'o'; i++; continue; }
+            if (next == 0xBA || next == 0x9A) { res += 'u'; i++; continue; }
+        }
+        if (c >= 'A' && c <= 'Z') res += (char)(c + 32);
+        else if (c != ' ' && c != '\t' && c != '\r' && c != '\n') res += (char)c;
+    }
+    return res;
+}
+
+// convierte el campo completo a entero
+static bool convertirEntero(string texto, int& valor) {
+    try {
+        size_t posicion = 0;
+        valor = stoi(texto, &posicion);
+        return posicion == texto.length();
+    } catch (...) {
+        return false;
+    }
+}
+
+// convierte el campo completo a decimal
+static bool convertirDecimal(string texto, double& valor) {
+    try {
+        size_t posicion = 0;
+        valor = stod(texto, &posicion);
+        return posicion == texto.length() && std::isfinite(valor);
+    } catch (...) {
+        return false;
+    }
 }
 
 // constructor
@@ -33,13 +68,13 @@ void Hospital::inicializarServicios() {
     }
 }
 
-// validacion de departamento con punteros
+// valida departamento con punteros
 bool Hospital::esServicioValido(string servLeido, string& servOficial) const {
     const string* inicio = nombresServicios;
     const string* fin = nombresServicios + TOTAL_SERVICIOS;
 
     for (const string* ptr = inicio; ptr < fin; ptr++) {
-        if (aMinuscula(*ptr) == aMinuscula(servLeido)) {
+        if (limpiar(*ptr) == limpiar(servLeido)) {
             servOficial = *ptr;
             return true;
         }
@@ -47,82 +82,24 @@ bool Hospital::esServicioValido(string servLeido, string& servOficial) const {
     return false;
 }
 
-// catalogo de tipos de dolor aceptados
-static const string TIPOS_DOLOR[TOTAL_TIPOS_DOLOR] = {
-    "pecho", "cabeza", "abdomen", "extremidad", "otro"
-};
-
-// valida el tipo de dolor con aritmetica de punteros (igual que esServicioValido)
-bool Hospital::esTipoDolorValido(const string& leido, string& oficial) const {
-    const string* inicio = TIPOS_DOLOR;
-    const string* fin = TIPOS_DOLOR + TOTAL_TIPOS_DOLOR;
-
-    for (const string* ptr = inicio; ptr < fin; ptr++) {
-        // limpiar() pasa a minuscula y quita tildes: "PECHO" == "pecho"
-        if (aMinuscula(*ptr) == aMinuscula(leido)) {
-            oficial = *ptr;
-            return true;
-        }
-    }
-    return false;
-}
-
-// texto -> int, solo si TODO el texto es numero y esta en [minimo, maximo]
-bool Hospital::convertirEntero(const string& texto, int minimo, int maximo, int& resultado) const {
-    if (texto.empty()) return false;
-    try {
-        size_t usados = 0;                          // stoi anota aqui cuantos chars leyo
-        int valor = stoi(texto, &usados);
-        if (usados != texto.size()) return false;   // "12abc" -> usados = 2 de 5
-        if (valor < minimo || valor > maximo) return false;
-        resultado = valor;
-        return true;
-    } catch (const invalid_argument&) {             // "abc": no empieza con numero
-        return false;
-    } catch (const out_of_range&) {                 // "99999999999": no cabe en int
-        return false;
-    }
-}
-
-// texto -> float, misma idea que convertirEntero
-bool Hospital::convertirDecimal(const string& texto, float minimo, float maximo, float& resultado) const {
-    if (texto.empty()) return false;
-    try {
-        size_t usados = 0;
-        float valor = stof(texto, &usados);
-        if (usados != texto.size()) return false;   // "38,7" -> usados = 2 de 4
-        if (valor < minimo || valor > maximo) return false;
-        resultado = valor;
-        return true;
-    } catch (const invalid_argument&) {
-        return false;
-    } catch (const out_of_range&) {
-        return false;
-    }
-}
-
 // metodo para separar la linea con punteros
-// ahora arma directamente el paciente (paciente se recibe por referencia)
 bool Hospital::parsearLinea(string linea, Paciente& paciente, string& motivo) const {
+    motivo = "";
+    if (linea.empty()) {
+        motivo = "linea vacia";
+        return false;
+    }
 
     const char* ptr = linea.c_str();
-    string tokens[NUM_CAMPOS];
-    int tokenIdx = 0;
+    const int TOTAL_CAMPOS = 11;
+    string tokens[TOTAL_CAMPOS];
+    const string nombresCampos[TOTAL_CAMPOS] = {
+        "ID", "nombre", "edad", "temperatura", "presion arterial", "dolor",
+        "tipo de dolor", "trauma", "sintomas neurologicos", "requiere cirugia",
+        "dias de hospitalizacion"
+    };
 
-    // recorre TODA la linea (antes paraba en el campo 11 e ignoraba lo que sobraba)
-    while (*ptr != '\0') {
-        // salta espacios
-        while (*ptr == ' ' || *ptr == '\t' || *ptr == '\r') {
-            ptr++;
-        }
-        if (*ptr == '\0') break;
-
-        // aparecio un campo numero 12
-        if (tokenIdx == NUM_CAMPOS) {
-            motivo = "tiene mas de " + to_string(NUM_CAMPOS) + " campos";
-            return false;
-        }
-
+    for (int i = 0; i < TOTAL_CAMPOS; i++) {
         const char* inicioToken = ptr;
 
         // avanza hasta el separador
@@ -130,64 +107,81 @@ bool Hospital::parsearLinea(string linea, Paciente& paciente, string& motivo) co
             ptr++;
         }
 
-        // retrocede espacios
-        const char* finToken = ptr - 1;
-        while (finToken >= inicioToken && (*finToken == ' ' || *finToken == '\t' || *finToken == '\r')) {
+        // quita los espacios de los extremos
+        const char* finToken = ptr;
+        while (inicioToken < finToken &&
+               (*inicioToken == ' ' || *inicioToken == '\t' || *inicioToken == '\r')) {
+            inicioToken++;
+        }
+        while (finToken > inicioToken &&
+               (*(finToken - 1) == ' ' || *(finToken - 1) == '\t' || *(finToken - 1) == '\r')) {
             finToken--;
         }
 
-        if (finToken >= inicioToken) {
-            tokens[tokenIdx] = string(inicioToken, finToken - inicioToken + 1);
+        if (inicioToken == finToken) {
+            motivo = "campo vacio: " + nombresCampos[i];
+            return false;
         }
-        tokenIdx++;
+        tokens[i] = string(inicioToken, finToken - inicioToken);
 
-        if (*ptr == ';') {
+        // revisa que existan exactamente once campos
+        if (i < TOTAL_CAMPOS - 1) {
+            if (*ptr != ';') {
+                motivo = "tiene " + to_string(i + 1) + " campos, se esperaban " + to_string(TOTAL_CAMPOS);
+                return false;
+            }
             ptr++;
+        } else if (*ptr != '\0') {
+            motivo = "tiene mas de " + to_string(TOTAL_CAMPOS) + " campos";
+            return false;
         }
     }
 
-    if (tokenIdx < NUM_CAMPOS) {
-        motivo = "tiene " + to_string(tokenIdx) + " campos, se esperaban " + to_string(NUM_CAMPOS);
+    int edad = 0, presion = 0, dolor = 0, dias = 0;
+    double temperatura = 0;
+
+    // convierte y valida cada dato numerico
+    if (!convertirEntero(tokens[2], edad) || edad < 0 || edad > 130) {
+        motivo = "edad invalida (" + tokens[2] + "), rango 0-130";
         return false;
     }
-    if (tokens[0].empty()) { motivo = "ID vacio"; return false; }
-    if (tokens[1].empty()) { motivo = "nombre vacio"; return false; }
-
-    int edad, presion, dolor, trauma, neuro, cirugia, dias;
-    float temperatura;
-    string tipoDolor;
-
-    // cada campo con su rango; si falla se dice cual y por que
-    if (!convertirEntero(tokens[2], 0, 120, edad)) {
-        motivo = "edad invalida (" + tokens[2] + "), rango 0-120"; return false;
+    if (!convertirDecimal(tokens[3], temperatura) || temperatura <= 0) {
+        motivo = "temperatura invalida (" + tokens[3] + "), debe ser un numero positivo con punto decimal";
+        return false;
     }
-    if (!convertirDecimal(tokens[3], 34.0f, 43.0f, temperatura)) {
-        motivo = "temperatura invalida (" + tokens[3] + "), rango 34.0-43.0 con punto"; return false;
+    if (!convertirEntero(tokens[4], presion) || presion <= 0) {
+        motivo = "presion arterial invalida (" + tokens[4] + "), debe ser un entero positivo";
+        return false;
     }
-    if (!convertirEntero(tokens[4], 60, 250, presion)) {
-        motivo = "presion invalida (" + tokens[4] + "), rango 60-250"; return false;
-    }
-    if (!convertirEntero(tokens[5], 0, 10, dolor)) {
-        motivo = "dolor invalido (" + tokens[5] + "), rango 0-10"; return false;
-    }
-    if (!esTipoDolorValido(tokens[6], tipoDolor)) {
-        motivo = "tipo de dolor desconocido (" + tokens[6] + ")"; return false;
-    }
-    if (!convertirEntero(tokens[7], 0, 1, trauma)) {
-        motivo = "trauma debe ser 0 o 1 (" + tokens[7] + ")"; return false;
-    }
-    if (!convertirEntero(tokens[8], 0, 1, neuro)) {
-        motivo = "sintomas neurologicos debe ser 0 o 1 (" + tokens[8] + ")"; return false;
-    }
-    if (!convertirEntero(tokens[9], 0, 1, cirugia)) {
-        motivo = "requiere cirugia debe ser 0 o 1 (" + tokens[9] + ")"; return false;
-    }
-    if (!convertirEntero(tokens[10], 0, 365, dias)) {
-        motivo = "dias de hospitalizacion invalidos (" + tokens[10] + "), rango 0-365"; return false;
+    if (!convertirEntero(tokens[5], dolor) || dolor < 0 || dolor > 10) {
+        motivo = "dolor invalido (" + tokens[5] + "), rango 0-10";
+        return false;
     }
 
-    paciente = Paciente(tokens[0], tokens[1], edad, temperatura, presion,
-                        dolor, tipoDolor, trauma, neuro, cirugia, dias);
+    if (!convertirEntero(tokens[10], dias) || dias < 0) {
+        motivo = "dias de hospitalizacion invalidos (" + tokens[10] + "), deben ser un entero no negativo";
+        return false;
+    }
+
+    // valida los campos que solo reciben cero o uno
+    for (int i = 7; i <= 9; i++) {
+        if (tokens[i] != "0" && tokens[i] != "1") {
+            motivo = nombresCampos[i] + " debe ser 0 o 1 (" + tokens[i] + ")";
+            return false;
+        }
+    }
+
+    // valida el tipo de dolor
+    string tipoDolor = limpiar(tokens[6]);
+    if (tipoDolor != "pecho" && tipoDolor != "cabeza" && tipoDolor != "abdomen" &&
+        tipoDolor != "extremidad" && tipoDolor != "otro") {
+        motivo = "tipo de dolor desconocido (" + tokens[6] + ")";
+        return false;
+    }
+
+    // crea el paciente sin asignar un servicio
+    paciente = Paciente(tokens[0], tokens[1], edad, temperatura, presion, dolor,
+                        tipoDolor, tokens[7] == "1", tokens[8] == "1", tokens[9] == "1", dias);
     return true;
 }
 
@@ -203,28 +197,36 @@ bool Hospital::cargarPacientes(string ruta) {
     }
 
     string linea;
-    int numLinea = 0;
     int cargados = 0;
     int rechazados = 0;
+    int numeroLinea = 0;
 
     while (getline(archivo, linea)) {
-        numLinea++;
+        numeroLinea++;
 
-        // linea vacia o solo espacios: se ignora sin reclamar
-        if (aMinuscula(linea).empty()) continue;
+        // quita la marca utf8 si viene al inicio
+        if (numeroLinea == 1 && linea.compare(0, 3, "\xEF\xBB\xBF") == 0) {
+            linea.erase(0, 3);
+        }
+        if (limpiar(linea).empty()) continue;
 
-        // el servicio ya no viene en el archivo: lo decide el arbol al atender
+        // salta la cabecera si viene en el archivo
+        if (limpiar(linea) == "id;nombre;edad;temperatura;presionarterial;dolor;"
+                              "tipodolor;trauma;sintomasneurologicos;requierecirugia;diashospitalizacion") {
+            continue;
+        }
+
         Paciente p;
         string motivo;
         if (!parsearLinea(linea, p, motivo)) {
-            cout << "[RECHAZADA] linea " << numLinea << ": " << motivo << endl;
+            cout << "[ERROR] Linea " << numeroLinea << ": " << motivo << endl;
             rechazados++;
             continue;
         }
 
-        // si ya existe
+        // revisa si ya existe el id
         if (colaEspera.existe(p.getId()) || servicios.existePaciente(p.getId())) {
-            cout << "[RECHAZADA] linea " << numLinea << ": ID duplicado (" << p.getId() << ")" << endl;
+            cout << "[ERROR] Linea " << numeroLinea << ": ID repetido " << p.getId() << "." << endl;
             rechazados++;
             continue;
         }
@@ -234,11 +236,9 @@ bool Hospital::cargarPacientes(string ruta) {
     }
 
     archivo.close();
-    cout << "-> Pacientes cargados en cola: " << cargados;
-    if (rechazados > 0) cout << " | lineas rechazadas: " << rechazados;
-    cout << endl;
+    cout << "-> Pacientes cargados en cola: " << cargados << endl;
+    if (rechazados > 0) cout << "-> Registros rechazados: " << rechazados << endl;
     return cargados > 0;
-    // si no null
 }
 
 // out para la cola
@@ -259,9 +259,21 @@ void Hospital::atenderPacientes(int cantidad) {
 
     while (atendidos < cantidad && !colaEspera.isEmpty()) {
         Paciente p;
+        if (!colaEspera.consultarFrente(p)) break;
+
+        // mantiene al paciente en cola hasta conectar el clasificador
+        if (p.getServicio().empty()) {
+            cout << "[AVISO] Los pacientes aun no tienen un servicio asignado. Siguen en espera." << endl;
+            break;
+        }
+
         if (colaEspera.dequeue(p)) {
             // deriva al servicio
-            servicios.agregarPacienteAServicio(p.getServicio(), p);
+            if (!servicios.agregarPacienteAServicio(p.getServicio(), p)) {
+                cout << "[ERROR] Paciente " << p.getId()
+                     << " rechazado: ID repetido o servicio no valido." << endl;
+                continue;
+            }
 
             // guarda en historial
             historial.push(p);
@@ -289,7 +301,7 @@ void Hospital::mostrarEstadoDepartamento(int indice) const {
 
         cout << "\n=== ESTADO " << nomMayus << " ===" << endl;
         cout << "Pacientes en el departamento de " << nodo->nombre << ": " << nodo->pacientes.size() << endl;
-        nodo->pacientes.mostrar();
+        nodo->pacientes.mostrarInorden();
     } else {
         cout << "\n[ERROR] Departamento no valido." << endl;
     }
@@ -309,15 +321,15 @@ void Hospital::buscarPaciente(string criterio) const {
 
     Paciente p;
     if (colaEspera.buscar(criterio, p)) {
-        cout << "[EN COLA DE ESPERA] ID: " << p.getId() << " | Nombre: " << p.getNombre()
-             << " | Edad: " << p.getEdad() << " | Servicio: " << p.getServicio() << endl;
+        cout << "[EN COLA DE ESPERA]" << endl;
+        p.mostrar();
         return;
     }
 
     string serv;
     if (servicios.buscarPaciente(criterio, p, serv)) {
-        cout << "[ATENDIDO EN: " << serv << "] ID: " << p.getId()
-             << " | Nombre: " << p.getNombre() << " | Edad: " << p.getEdad() << endl;
+        cout << "[ATENDIDO EN: " << serv << "]" << endl;
+        p.mostrar();
         return;
     }
 
