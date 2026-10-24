@@ -19,11 +19,13 @@ flowchart LR
     D --> E["AVL del servicio<br/>Clave: ID"]
 ```
 
-`Hospital` coordina el procesamiento en orden de llegada. Cada servicio tendrá su propio AVL, ordenado por ID.
+`Hospital` coordina el procesamiento en orden de llegada. Cada servicio mantiene su propio AVL, ordenado por ID.
 
-**Implementado:** lectura y validación de pacientes, cola FIFO, búsqueda por ID o nombre y menú. El AVL tiene nodo, constructor, destructor y consultas básicas.
+Los AVL permiten insertar y eliminar pacientes, buscar por ID o nombre, mostrar recorridos y consultar altura y balance. El menú permite atender, ver departamentos y buscar.
 
-**Pendiente:** árbol de decisión y justificación de sus reglas; operaciones e integración de los AVL; pruebas en Codespaces y completar paralelos. Por ahora, atender conserva los pacientes sin clasificar en la cola y muestra un aviso.
+Los IDs repetidos o servicios inválidos se informan y descartan sin registrar una atención.
+
+**Pruebas locales:** rotaciones, búsquedas y eliminación verificadas. El seguimiento temporal de `new/delete` confirmó la liberación de los nodos de AVL, cola, servicios e historial.
 
 ## Compilación y ejecución
 
