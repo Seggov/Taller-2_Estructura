@@ -269,7 +269,11 @@ void Hospital::atenderPacientes(int cantidad) {
 
         if (colaEspera.dequeue(p)) {
             // deriva al servicio
-            servicios.agregarPacienteAServicio(p.getServicio(), p);
+            if (!servicios.agregarPacienteAServicio(p.getServicio(), p)) {
+                cout << "[ERROR] Paciente " << p.getId()
+                     << " rechazado: ID repetido o servicio no valido." << endl;
+                continue;
+            }
 
             // guarda en historial
             historial.push(p);
