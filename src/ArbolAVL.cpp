@@ -32,8 +32,70 @@ int ArbolAVL::size() const {
 
 // devuelve la altura del arbol
 int ArbolAVL::obtenerAltura() const {
-    if (raiz == nullptr) return 0;
-    return raiz->altura;
+    return alturaNodo(raiz);
+}
+
+// altura de un nodo o cero si no existe
+int ArbolAVL::alturaNodo(NodoAVL* nodo) const {
+    if (nodo == nullptr) return 0;
+    return nodo->altura;
+}
+
+// actualiza la altura usando el hijo mas alto
+void ArbolAVL::actualizarAltura(NodoAVL* nodo) {
+    if (nodo == nullptr) return;
+
+    int alturaIzquierda = alturaNodo(nodo->izquierdo);
+    int alturaDerecha = alturaNodo(nodo->derecho);
+
+    if (alturaIzquierda > alturaDerecha) nodo->altura = alturaIzquierda + 1;
+    else nodo->altura = alturaDerecha + 1;
+}
+
+// diferencia entre las alturas de los hijos
+int ArbolAVL::obtenerBalance(NodoAVL* nodo) const {
+    if (nodo == nullptr) return 0;
+    return alturaNodo(nodo->izquierdo) - alturaNodo(nodo->derecho);
+}
+
+// sube el hijo izquierdo
+NodoAVL* ArbolAVL::rotacionDerecha(NodoAVL* nodo) {
+    NodoAVL* nuevaRaiz = nodo->izquierdo;
+    NodoAVL* subarbol = nuevaRaiz->derecho;
+
+    nuevaRaiz->derecho = nodo;
+    nodo->izquierdo = subarbol;
+
+    // primero actualiza el nodo que baja
+    actualizarAltura(nodo);
+    actualizarAltura(nuevaRaiz);
+    return nuevaRaiz;
+}
+
+// sube el hijo derecho
+NodoAVL* ArbolAVL::rotacionIzquierda(NodoAVL* nodo) {
+    NodoAVL* nuevaRaiz = nodo->derecho;
+    NodoAVL* subarbol = nuevaRaiz->izquierdo;
+
+    nuevaRaiz->izquierdo = nodo;
+    nodo->derecho = subarbol;
+
+    // primero actualiza el nodo que baja
+    actualizarAltura(nodo);
+    actualizarAltura(nuevaRaiz);
+    return nuevaRaiz;
+}
+
+// izquierda en el hijo y derecha en el nodo
+NodoAVL* ArbolAVL::rotacionIzquierdaDerecha(NodoAVL* nodo) {
+    nodo->izquierdo = rotacionIzquierda(nodo->izquierdo);
+    return rotacionDerecha(nodo);
+}
+
+// derecha en el hijo e izquierda en el nodo
+NodoAVL* ArbolAVL::rotacionDerechaIzquierda(NodoAVL* nodo) {
+    nodo->derecho = rotacionDerecha(nodo->derecho);
+    return rotacionIzquierda(nodo);
 }
 
 // inserta un paciente y actualiza la cantidad
@@ -45,7 +107,7 @@ bool ArbolAVL::insertar(const Paciente& paciente) {
     return insertado;
 }
 
-// inserta siguiendo el orden de un abb
+// inserta por id y mantiene el balance
 NodoAVL* ArbolAVL::insertarNodo(NodoAVL* nodo, const Paciente& paciente, bool& insertado) {
     if (nodo == nullptr) {
         nodo = new NodoAVL(paciente);
@@ -64,15 +126,21 @@ NodoAVL* ArbolAVL::insertarNodo(NodoAVL* nodo, const Paciente& paciente, bool& i
     }
 
     // actualiza la altura al volver de la insercion
-    int alturaIzquierda = 0;
-    int alturaDerecha = 0;
-    if (nodo->izquierdo != nullptr) alturaIzquierda = nodo->izquierdo->altura;
-    if (nodo->derecho != nullptr) alturaDerecha = nodo->derecho->altura;
+    actualizarAltura(nodo);
+    int balance = obtenerBalance(nodo);
 
-    if (alturaIzquierda > alturaDerecha) nodo->altura = alturaIzquierda + 1;
-    else nodo->altura = alturaDerecha + 1;
+    // revisa si pesa mas hacia la izquierda
+    if (balance > 1) {
+        if (obtenerBalance(nodo->izquierdo) < 0) return rotacionIzquierdaDerecha(nodo);
+        return rotacionDerecha(nodo);
+    }
 
-    // el balanceo se agrega en el siguiente avance
+    // revisa si pesa mas hacia la derecha
+    if (balance < -1) {
+        if (obtenerBalance(nodo->derecho) > 0) return rotacionDerechaIzquierda(nodo);
+        return rotacionIzquierda(nodo);
+    }
+
     return nodo;
 }
 
