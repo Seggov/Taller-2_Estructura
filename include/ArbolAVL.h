@@ -31,6 +31,19 @@ private:
     // inserta en el subarbol y devuelve su raiz
     NodoAVL* insertarNodo(NodoAVL* nodo, const Paciente& paciente, bool& insertado);
 
+    // altura y balance de un nodo
+    int alturaNodo(NodoAVL* nodo) const;
+    void actualizarAltura(NodoAVL* nodo);
+    int obtenerBalance(NodoAVL* nodo) const;
+
+    // rotaciones simples
+    NodoAVL* rotacionDerecha(NodoAVL* nodo);
+    NodoAVL* rotacionIzquierda(NodoAVL* nodo);
+
+    // rotaciones dobles
+    NodoAVL* rotacionIzquierdaDerecha(NodoAVL* nodo);
+    NodoAVL* rotacionDerechaIzquierda(NodoAVL* nodo);
+
 public:
     // constructor y destructor
     ArbolAVL();
