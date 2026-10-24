@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "Paciente.h"
+#include "ArbolAVL.h"
 
 using namespace std;
 
@@ -51,29 +52,10 @@ public:
     bool buscar(string criterio, Paciente& encontrado) const;
 };
 
-// lista enlazada de pacientes por servicio
-class ListaPacientes {
-private:
-    NodoPaciente* head;
-    int tamano;
-
-public:
-    ListaPacientes();
-    ~ListaPacientes();
-
-    // mete al final
-    void insertar(Paciente p);
-    bool isEmpty() const;
-    int size() const;
-    void mostrar() const;
-    bool existe(string id) const;
-    bool buscar(string criterio, Paciente& encontrado) const;
-};
-
-// nodo que contiene el nombre del servicio y su lista
+// nodo que contiene el nombre del servicio y su avl
 struct NodoServicio {
     string nombre;
-    ListaPacientes pacientes;
+    ArbolAVL pacientes;
     NodoServicio* siguiente;
     NodoServicio(string n) : nombre(n), siguiente(nullptr) {}
 };
@@ -94,9 +76,15 @@ public:
     NodoServicio* obtenerPorIndice(int indice) const;
     int size() const;
     void mostrar() const;
+
+    // agrega por nombre o codigo desde cero
     bool agregarPacienteAServicio(string nombreServicio, Paciente p);
+    bool agregarPacienteAServicio(int codigoServicio, Paciente p);
+
+    // consultas y eliminacion en los avl
     bool buscarPaciente(string criterio, Paciente& encontrado, string& servicio) const;
     bool existePaciente(string id) const;
+    bool eliminarPaciente(string id);
 };
 
 // pila lifo para el historial
