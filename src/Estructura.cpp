@@ -94,72 +94,6 @@ bool ColaPacientes::buscar(string criterio, Paciente& encontrado) const {
     return false;
 }
 
-// constructor lista pacientes
-ListaPacientes::ListaPacientes() : head(nullptr), tamano(0) {}
-
-// destructor lista pacientes
-ListaPacientes::~ListaPacientes() {
-    while (head != nullptr) {
-        NodoPaciente* temp = head;
-        head = head->siguiente;
-        delete temp;
-    }
-    tamano = 0;
-}
-
-// inserta al final de la lista
-void ListaPacientes::insertar(Paciente p) {
-    NodoPaciente* nuevo = new NodoPaciente(p);
-    if (head == nullptr) {
-        head = nuevo;
-    } else {
-        NodoPaciente* actual = head;
-        while (actual->siguiente != nullptr) {
-            actual = actual->siguiente;
-        }
-        actual->siguiente = nuevo;
-    }
-    tamano++;
-}
-
-bool ListaPacientes::isEmpty() const {
-    return head == nullptr;
-}
-
-int ListaPacientes::size() const {
-    return tamano;
-}
-
-// imprime la lista del departamento
-void ListaPacientes::mostrar() const {
-    NodoPaciente* actual = head;
-    while (actual != nullptr) {
-        actual->dato.mostrarEnDepartamento();
-        actual = actual->siguiente;
-    }
-}
-
-bool ListaPacientes::existe(string id) const {
-    NodoPaciente* actual = head;
-    while (actual != nullptr) {
-        if (actual->dato.getId() == id) return true;
-        actual = actual->siguiente;
-    }
-    return false;
-}
-
-bool ListaPacientes::buscar(string criterio, Paciente& encontrado) const {
-    NodoPaciente* actual = head;
-    while (actual != nullptr) {
-        if (actual->dato.getId() == criterio || actual->dato.getNombre() == criterio) {
-            encontrado = actual->dato;
-            return true;
-        }
-        actual = actual->siguiente;
-    }
-    return false;
-}
-
 // constructor lista servicios
 ListaServicios::ListaServicios() : head(nullptr), tamano(0) {}
 
@@ -245,18 +179,38 @@ void ListaServicios::mostrar() const {
 // agrega paciente a un servicio
 bool ListaServicios::agregarPacienteAServicio(string nombreServicio, Paciente p) {
     NodoServicio* serv = buscarServicio(nombreServicio);
-    if (serv != nullptr) {
-        serv->pacientes.insertar(p);
-        return true;
-    }
-    return false;
+    if (serv == nullptr || existePaciente(p.getId())) return false;
+
+    p.setServicio(serv->nombre);
+    return serv->pacientes.insertar(p);
+}
+
+// convierte el codigo a la posicion de la lista
+bool ListaServicios::agregarPacienteAServicio(int codigoServicio, Paciente p) {
+    if (codigoServicio < 0 || codigoServicio >= tamano) return false;
+
+    NodoServicio* serv = obtenerPorIndice(codigoServicio + 1);
+    if (serv == nullptr) return false;
+    return agregarPacienteAServicio(serv->nombre, p);
 }
 
 // busca paciente en todos los departamentos
 bool ListaServicios::buscarPaciente(string criterio, Paciente& encontrado, string& servicio) const {
     NodoServicio* actual = head;
+
+    // primero busca el id en todos los servicios
     while (actual != nullptr) {
-        if (actual->pacientes.buscar(criterio, encontrado)) {
+        if (actual->pacientes.buscarPorId(criterio, encontrado)) {
+            servicio = actual->nombre;
+            return true;
+        }
+        actual = actual->siguiente;
+    }
+
+    // si no era un id, busca el nombre
+    actual = head;
+    while (actual != nullptr) {
+        if (actual->pacientes.buscarPorNombre(criterio, encontrado)) {
             servicio = actual->nombre;
             return true;
         }
@@ -268,8 +222,19 @@ bool ListaServicios::buscarPaciente(string criterio, Paciente& encontrado, strin
 // verifica si el paciente ya esta en algun servicio
 bool ListaServicios::existePaciente(string id) const {
     NodoServicio* actual = head;
+    Paciente encontrado;
     while (actual != nullptr) {
-        if (actual->pacientes.existe(id)) return true;
+        if (actual->pacientes.buscarPorId(id, encontrado)) return true;
+        actual = actual->siguiente;
+    }
+    return false;
+}
+
+// elimina por id en el servicio donde se encuentre
+bool ListaServicios::eliminarPaciente(string id) {
+    NodoServicio* actual = head;
+    while (actual != nullptr) {
+        if (actual->pacientes.eliminar(id)) return true;
         actual = actual->siguiente;
     }
     return false;
