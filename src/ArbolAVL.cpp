@@ -36,7 +36,7 @@ int ArbolAVL::obtenerAltura() const {
 }
 
 // altura de un nodo o cero si no existe
-int ArbolAVL::alturaNodo(NodoAVL* nodo) const {
+int ArbolAVL::alturaNodo(const NodoAVL* nodo) const {
     if (nodo == nullptr) return 0;
     return nodo->altura;
 }
@@ -53,9 +53,31 @@ void ArbolAVL::actualizarAltura(NodoAVL* nodo) {
 }
 
 // diferencia entre las alturas de los hijos
-int ArbolAVL::obtenerBalance(NodoAVL* nodo) const {
+int ArbolAVL::obtenerBalance(const NodoAVL* nodo) const {
     if (nodo == nullptr) return 0;
     return alturaNodo(nodo->izquierdo) - alturaNodo(nodo->derecho);
+}
+
+// actualiza la altura y corrige el balance
+NodoAVL* ArbolAVL::balancear(NodoAVL* nodo) {
+    if (nodo == nullptr) return nullptr;
+
+    actualizarAltura(nodo);
+    int balance = obtenerBalance(nodo);
+
+    // revisa si pesa mas hacia la izquierda
+    if (balance > 1) {
+        if (obtenerBalance(nodo->izquierdo) < 0) return rotacionIzquierdaDerecha(nodo);
+        return rotacionDerecha(nodo);
+    }
+
+    // revisa si pesa mas hacia la derecha
+    if (balance < -1) {
+        if (obtenerBalance(nodo->derecho) > 0) return rotacionDerechaIzquierda(nodo);
+        return rotacionIzquierda(nodo);
+    }
+
+    return nodo;
 }
 
 // sube el hijo izquierdo
@@ -125,38 +147,173 @@ NodoAVL* ArbolAVL::insertarNodo(NodoAVL* nodo, const Paciente& paciente, bool& i
         return nodo;
     }
 
-    // actualiza la altura al volver de la insercion
-    actualizarAltura(nodo);
-    int balance = obtenerBalance(nodo);
+    return balancear(nodo);
+}
 
-    // revisa si pesa mas hacia la izquierda
-    if (balance > 1) {
-        if (obtenerBalance(nodo->izquierdo) < 0) return rotacionIzquierdaDerecha(nodo);
-        return rotacionDerecha(nodo);
+// elimina un paciente y actualiza la cantidad
+bool ArbolAVL::eliminar(string id) {
+    bool eliminado = false;
+    raiz = eliminarNodo(raiz, id, eliminado);
+
+    if (eliminado) tamano--;
+    return eliminado;
+}
+
+// elimina por id y mantiene el balance
+NodoAVL* ArbolAVL::eliminarNodo(NodoAVL* nodo, const string& id, bool& eliminado) {
+    if (nodo == nullptr) return nullptr;
+
+    if (id < nodo->dato.getId()) {
+        nodo->izquierdo = eliminarNodo(nodo->izquierdo, id, eliminado);
+    } else if (id > nodo->dato.getId()) {
+        nodo->derecho = eliminarNodo(nodo->derecho, id, eliminado);
+    } else {
+        eliminado = true;
+
+        // si tiene cero o un hijo, lo reemplaza por ese hijo
+        if (nodo->izquierdo == nullptr || nodo->derecho == nullptr) {
+            NodoAVL* hijo = nodo->izquierdo;
+            if (hijo == nullptr) hijo = nodo->derecho;
+            delete nodo;
+            return hijo;
+        }
+
+        // con dos hijos, copia al menor del lado derecho
+        NodoAVL* sucesor = menorNodo(nodo->derecho);
+        nodo->dato = sucesor->dato;
+        string idSucesor = sucesor->dato.getId();
+        nodo->derecho = eliminarNodo(nodo->derecho, idSucesor, eliminado);
     }
 
-    // revisa si pesa mas hacia la derecha
-    if (balance < -1) {
-        if (obtenerBalance(nodo->derecho) > 0) return rotacionDerechaIzquierda(nodo);
-        return rotacionIzquierda(nodo);
-    }
+    return balancear(nodo);
+}
 
+// busca el menor del subarbol
+NodoAVL* ArbolAVL::menorNodo(NodoAVL* nodo) const {
+    while (nodo != nullptr && nodo->izquierdo != nullptr) nodo = nodo->izquierdo;
     return nodo;
 }
 
 // busca desde la raiz comparando el id
-bool ArbolAVL::buscarPorId(string id, Paciente& encontrado) const {
+const NodoAVL* ArbolAVL::buscarNodo(string id) const {
     const NodoAVL* actual = raiz;
 
     while (actual != nullptr) {
-        if (id == actual->dato.getId()) {
-            encontrado = actual->dato;
-            return true;
-        }
+        if (id == actual->dato.getId()) return actual;
 
         if (id < actual->dato.getId()) actual = actual->izquierdo;
         else actual = actual->derecho;
     }
 
-    return false;
+    return nullptr;
+}
+
+// copia el paciente si encuentra su id
+bool ArbolAVL::buscarPorId(string id, Paciente& encontrado) const {
+    const NodoAVL* nodo = buscarNodo(id);
+    if (nodo == nullptr) return false;
+
+    encontrado = nodo->dato;
+    return true;
+}
+
+// busca el nombre recorriendo desde el menor id
+bool ArbolAVL::buscarPorNombre(string nombre, Paciente& encontrado) const {
+    return buscarNombreNodo(raiz, nombre, encontrado);
+}
+
+// recorre porque el arbol esta ordenado por id
+bool ArbolAVL::buscarNombreNodo(NodoAVL* nodo, const string& nombre, Paciente& encontrado) const {
+    if (nodo == nullptr) return false;
+
+    if (buscarNombreNodo(nodo->izquierdo, nombre, encontrado)) return true;
+
+    if (nodo->dato.getNombre() == nombre) {
+        encontrado = nodo->dato;
+        return true;
+    }
+
+    return buscarNombreNodo(nodo->derecho, nombre, encontrado);
+}
+
+// muestra izquierda, nodo y derecha
+void ArbolAVL::mostrarInorden() const {
+    if (isEmpty()) {
+        cout << "(No hay pacientes en el arbol)" << endl;
+        return;
+    }
+    inorden(raiz);
+}
+
+void ArbolAVL::inorden(NodoAVL* nodo) const {
+    if (nodo == nullptr) return;
+
+    inorden(nodo->izquierdo);
+    cout << "[" << nodo->dato.getId() << "] ";
+    nodo->dato.mostrarEnDepartamento();
+    inorden(nodo->derecho);
+}
+
+// muestra nodo, izquierda y derecha
+void ArbolAVL::mostrarPreorden() const {
+    if (isEmpty()) {
+        cout << "(No hay pacientes en el arbol)" << endl;
+        return;
+    }
+    preorden(raiz);
+}
+
+void ArbolAVL::preorden(NodoAVL* nodo) const {
+    if (nodo == nullptr) return;
+
+    cout << "[" << nodo->dato.getId() << "] ";
+    nodo->dato.mostrarEnDepartamento();
+    preorden(nodo->izquierdo);
+    preorden(nodo->derecho);
+}
+
+// muestra izquierda, derecha y nodo
+void ArbolAVL::mostrarPostorden() const {
+    if (isEmpty()) {
+        cout << "(No hay pacientes en el arbol)" << endl;
+        return;
+    }
+    postorden(raiz);
+}
+
+void ArbolAVL::postorden(NodoAVL* nodo) const {
+    if (nodo == nullptr) return;
+
+    postorden(nodo->izquierdo);
+    postorden(nodo->derecho);
+    cout << "[" << nodo->dato.getId() << "] ";
+    nodo->dato.mostrarEnDepartamento();
+}
+
+// consulta el balance de un paciente
+bool ArbolAVL::consultarBalance(string id, int& balance) const {
+    const NodoAVL* nodo = buscarNodo(id);
+    if (nodo == nullptr) return false;
+
+    balance = obtenerBalance(nodo);
+    return true;
+}
+
+// muestra altura y balance de cada paciente
+void ArbolAVL::mostrarBalance() const {
+    if (isEmpty()) {
+        cout << "(No hay pacientes en el arbol)" << endl;
+        return;
+    }
+    mostrarBalanceNodo(raiz);
+}
+
+void ArbolAVL::mostrarBalanceNodo(NodoAVL* nodo) const {
+    if (nodo == nullptr) return;
+
+    mostrarBalanceNodo(nodo->izquierdo);
+    cout << "ID: " << nodo->dato.getId()
+         << " | Altura: " << nodo->altura
+         << " | Balance: " << obtenerBalance(nodo) << endl;
+    mostrarBalanceNodo(nodo->derecho);
 }
