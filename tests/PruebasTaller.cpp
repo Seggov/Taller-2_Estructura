@@ -129,6 +129,49 @@ void probarAVL() {
     cout << "[OK] Comprobaciones de AVL terminadas." << endl;
 }
 
+// prueba la prioridad del id
+void probarBusqueda() {
+    ColaPacientes cola;
+    cola.enqueue(Paciente("002", "001", 25, 37, 120, 3, "otro", false, false, false, 0));
+    cola.enqueue(Paciente("001", "Ana", 25, 37, 120, 3, "otro", false, false, false, 0));
+
+    Paciente encontrado;
+    comprobar(cola.buscar("001", encontrado) && encontrado.getId() == "001" &&
+              encontrado.getNombre() == "Ana", "id antes de nombre en la cola");
+    comprobar(cola.buscar("Ana", encontrado) && encontrado.getId() == "001", "nombre en la cola");
+    comprobar(cola.size() == 2, "buscar conserva la cantidad en cola");
+    comprobar(cola.dequeue(encontrado) && encontrado.getId() == "002", "buscar conserva el primero");
+    comprobar(cola.dequeue(encontrado) && encontrado.getId() == "001", "buscar conserva el siguiente");
+
+    Hospital hospital;
+    string servicio;
+    comprobar(hospital.cargarPacientes("tests/data/pacientes_busqueda.txt"), "cargar casos de busqueda");
+    comprobar(hospital.buscarPaciente("001", encontrado, servicio) && encontrado.getId() == "001" &&
+              servicio == "En espera", "buscar id antes de atender");
+    hospital.atenderPacientes(1);
+    comprobar(hospital.buscarPaciente("001", encontrado, servicio) && encontrado.getId() == "001" &&
+              encontrado.getNombre() == "Ana" && servicio == "Medicina General", "id atendido antes de nombre en cola");
+    comprobar(hospital.buscarPaciente("002", encontrado, servicio) && encontrado.getId() == "002" &&
+              servicio == "En espera", "id en cola antes de nombre atendido");
+    comprobar(hospital.buscarPaciente("Ana", encontrado, servicio) && encontrado.getId() == "001" &&
+              servicio == "Medicina General", "nombre de paciente atendido");
+    comprobar(hospital.buscarPaciente("Bruno", encontrado, servicio) && encontrado.getId() == "003" &&
+              servicio == "En espera", "nombre de paciente en cola");
+    comprobar(hospital.getCantidadEnEspera() == 3, "consultas conservan la cola");
+
+    hospital.atenderPacientes(1);
+    comprobar(hospital.buscarPaciente("002", encontrado, servicio) && encontrado.getId() == "002" &&
+              servicio == "Pediatria", "id en otro servicio antes de nombre en cola");
+    hospital.atenderPacientes(2);
+    comprobar(hospital.buscarPaciente("001", encontrado, servicio) && encontrado.getId() == "001" &&
+              servicio == "Medicina General", "id antes de nombre entre servicios");
+    comprobar(hospital.buscarPaciente("Bruno", encontrado, servicio) && encontrado.getId() == "003" &&
+              servicio == "Cardiologia", "nombre despues de atender");
+    comprobar(!hospital.buscarPaciente("999", encontrado, servicio), "busqueda inexistente");
+    comprobar(!hospital.buscarPaciente("", encontrado, servicio), "busqueda vacia");
+    cout << "[OK] Comprobaciones de busqueda terminadas." << endl;
+}
+
 // prueba la integracion
 void probarIntegracion() {
     Hospital hospital;
@@ -179,6 +222,7 @@ int main() {
     probarClasificacion();
     probarRecorridos();
     probarAVL();
+    probarBusqueda();
     probarIntegracion();
     if (errores != 0) {
         cerr << "Pruebas terminadas con " << errores << " errores." << endl;

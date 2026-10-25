@@ -1,0 +1,5 @@
+ID;Nombre;Edad;Temperatura;PresionArterial;Dolor;TipoDolor;Trauma;SintomasNeurologicos;RequiereCirugia;DiasHospitalizacion
+001;Ana;25;37.0;120;3;otro;0;0;0;0
+002;001;10;37.0;120;3;otro;0;0;0;0
+003;Bruno;25;37.0;120;3;pecho;0;0;0;0
+004;002;25;38.5;120;3;otro;0;0;0;0
