@@ -27,10 +27,6 @@ La búsqueda prioriza el ID en la cola y los servicios. Si no existe, busca por 
 
 Los IDs repetidos o servicios inválidos se informan y descartan sin registrar una atención.
 
-**Pruebas locales:** rotaciones, búsquedas y eliminación verificadas. El seguimiento temporal de `new/delete` confirmó la liberación de los nodos de AVL, cola, servicios e historial.
-
-Las comprobaciones del clasificador, sus recorridos, FIFO y AVL se ejecutan siguiendo [tests/README.md](tests/README.md).
-
 ## Compilación y ejecución
 
 Desde la raíz del taller, con g++ y C++17:
