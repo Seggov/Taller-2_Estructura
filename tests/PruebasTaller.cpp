@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "../include/Hospital.h"
 
 using namespace std;
@@ -48,7 +49,47 @@ void probarClasificacion() {
     comprobar(arbol.clasificar(presion, ruta) == 0, "limite de presion 180");
     comprobar(ruta.find("PresionArterial >= 180") != string::npos, "ruta de presion alta");
     comprobar(arbol.clasificar(casos[7], ruta) == 1, "limites sin urgencia");
+    Paciente trauma("013", "Trauma", 25, 39, 190, 9, "pecho", true, true, false, 3);
+    comprobar(arbol.clasificar(trauma, ruta) == 4, "trauma antes de otros sintomas");
+    Paciente neuro("014", "Neuro", 25, 39, 190, 9, "pecho", false, true, false, 3);
+    comprobar(arbol.clasificar(neuro, ruta) == 3, "neurologia antes de cardiologia");
+    Paciente pecho("015", "Pecho", 25, 39, 190, 9, "pecho", false, false, false, 3);
+    comprobar(arbol.clasificar(pecho, ruta) == 2, "cardiologia antes de urgencias");
     cout << "[OK] Comprobaciones del clasificador terminadas." << endl;
+}
+
+// guarda la salida del recorrido
+string capturarRecorrido(Hospital& hospital, int recorrido) {
+    ostringstream salida;
+    streambuf* anterior = cout.rdbuf(salida.rdbuf());
+    hospital.mostrarArbolDecision(recorrido);
+    cout.rdbuf(anterior);
+    return salida.str();
+}
+
+// prueba los recorridos
+void probarRecorridos() {
+    Hospital hospital;
+    string recorridos[3];
+    string servicios[8] = {"Urgencias", "Medicina General", "Cardiologia", "Neurologia",
+                          "Traumatologia", "Cirugia", "Pediatria", "Hospitalizacion"};
+    for (int i = 0; i < 3; i++) {
+        recorridos[i] = capturarRecorrido(hospital, i + 1);
+        for (int j = 0; j < 8; j++) {
+            comprobar(recorridos[i].find("[" + servicios[j] + "]") != string::npos,
+                      "servicio presente en el recorrido");
+        }
+    }
+    comprobar(recorridos[0].find("inorden:") != string::npos, "consulta inorden");
+    comprobar(recorridos[1].find("preorden:") != string::npos, "consulta preorden");
+    comprobar(recorridos[2].find("postorden:") != string::npos, "consulta postorden");
+    comprobar(recorridos[0].find("[Cirugia]") < recorridos[0].find("Edad >= 14?") &&
+              recorridos[0].find("Edad >= 14?") < recorridos[0].find("[Pediatria]"), "raiz en inorden");
+    comprobar(recorridos[1].find("Edad >= 14?") < recorridos[1].find("[Cirugia]"), "raiz en preorden");
+    comprobar(recorridos[2].find("Edad >= 14?") > recorridos[2].find("[Pediatria]"), "raiz en postorden");
+    comprobar(capturarRecorrido(hospital, 4).find("[ERROR]") != string::npos, "recorrido invalido");
+    comprobar(hospital.getCantidadEnEspera() == 0, "recorridos sin cargar pacientes");
+    cout << "[OK] Comprobaciones de recorridos terminadas." << endl;
 }
 
 // prueba el avl
@@ -136,6 +177,7 @@ void probarIntegracion() {
 
 int main() {
     probarClasificacion();
+    probarRecorridos();
     probarAVL();
     probarIntegracion();
     if (errores != 0) {

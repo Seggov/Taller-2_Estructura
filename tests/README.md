@@ -1,6 +1,6 @@
 # Pruebas del taller
 
-Ejecutar desde la raiz del taller. Se comprueban los ocho servicios, prioridades del clasificador, FIFO, duplicados, archivos invalidos y operaciones AVL.
+Ejecutar desde la raiz del taller. Se comprueban los ocho servicios, limites y prioridades del clasificador, sus tres recorridos, FIFO, duplicados, archivos invalidos y operaciones AVL.
 
 Linux o Codespaces:
 
@@ -10,6 +10,8 @@ g++ -std=c++17 -Wall -Wextra -Wpedantic tests/PruebasTaller.cpp src/Persona.cpp 
 ```
 
 En Windows, usar `-o pruebas_taller.exe` y ejecutar `.\pruebas_taller.exe`.
+
+En el programa principal, la opcion 5 permite elegir el recorrido del clasificador y la opcion 6 permite salir. Los submenus aceptan 0 para volver y el programa termina si se cierra la entrada.
 
 Los mensajes de rechazo corresponden a los casos invalidos del archivo de prueba. El resultado final debe ser `Todas las pruebas pasaron.` y el codigo de salida `0`.
 
