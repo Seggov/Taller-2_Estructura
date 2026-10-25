@@ -21,13 +21,13 @@ flowchart LR
 
 `Hospital` coordina el procesamiento en orden de llegada. Cada servicio mantiene su propio AVL, ordenado por ID.
 
-El menú permite atender, consultar departamentos, buscar por ID o nombre, eliminar por ID y salir. En cada departamento se puede consultar inorden, preorden, postorden, altura y balance del AVL.
+El menú permite atender, consultar departamentos, buscar por ID o nombre, eliminar por ID, ver el árbol de decisión y salir. En cada departamento se puede consultar inorden, preorden, postorden, altura y balance del AVL. La opción 5 muestra los recorridos del clasificador y la opción 6 permite salir.
 
 Los IDs repetidos o servicios inválidos se informan y descartan sin registrar una atención.
 
 **Pruebas locales:** rotaciones, búsquedas y eliminación verificadas. El seguimiento temporal de `new/delete` confirmó la liberación de los nodos de AVL, cola, servicios e historial.
 
-Las comprobaciones del clasificador, FIFO y AVL se ejecutan siguiendo [tests/README.md](tests/README.md).
+Las comprobaciones del clasificador, sus recorridos, FIFO y AVL se ejecutan siguiendo [tests/README.md](tests/README.md).
 
 ## Compilación y ejecución
 
