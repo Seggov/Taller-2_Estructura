@@ -45,6 +45,7 @@ public:
     void buscarPaciente(string criterio) const;
     bool buscarPaciente(string criterio, Paciente& encontrado, string& servicio) const;
     bool eliminarPaciente(string id);
+    void mostrarArbolDecision(int recorrido) const;
 
     int getCantidadEnEspera() const;
     int getCantidadEnServicio(int codigo) const;

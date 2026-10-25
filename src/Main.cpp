@@ -10,6 +10,7 @@ void menu();
 bool leerNumero(int& valor);
 bool selector(int& opcion);
 void consultarDepartamento(Hospital& hospital);
+void consultarArbol(Hospital& hospital);
 
 int main() {
     Hospital hospital;
@@ -72,8 +73,14 @@ int main() {
                 break;
             }
 
-            // opcion salir
+            // opcion ver arbol
             case 5: {
+                consultarArbol(hospital);
+                break;
+            }
+
+            // opcion salir
+            case 6: {
                 cout << "\nHasta luego :D." << endl;
                 esTerminado = true;
                 break;
@@ -98,7 +105,8 @@ void menu() {
     cout << "2. Ver departamento" << endl;
     cout << "3. Buscar paciente" << endl;
     cout << "4. Eliminar paciente" << endl;
-    cout << "5. Salir" << endl;
+    cout << "5. Ver arbol de decision" << endl;
+    cout << "6. Salir" << endl;
 }
 
 
@@ -136,4 +144,13 @@ void consultarDepartamento(Hospital& hospital) {
     int opcion = 0;
     if (!leerNumero(opcion) || opcion == 0) return;
     hospital.mostrarEstadoDepartamento(indice, opcion);
+}
+
+// consulta el arbol
+void consultarArbol(Hospital& hospital) {
+    cout << "\n1. Inorden\n2. Preorden\n3. Postorden\n0. Volver" << endl;
+    cout << "Seleccionar recorrido: ";
+    int opcion = 0;
+    if (!leerNumero(opcion) || opcion == 0) return;
+    hospital.mostrarArbolDecision(opcion);
 }

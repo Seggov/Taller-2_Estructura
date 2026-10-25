@@ -368,6 +368,16 @@ bool Hospital::eliminarPaciente(string id) {
     return servicios.eliminarPaciente(id);
 }
 
+// recorridos del clasificador
+void Hospital::mostrarArbolDecision(int recorrido) const {
+    switch (recorrido) {
+        case 1: arbol.mostrarInorden(nombresServicios); break;
+        case 2: arbol.mostrarPreorden(nombresServicios); break;
+        case 3: arbol.mostrarPostorden(nombresServicios); break;
+        default: cout << "[ERROR] Recorrido no valido." << endl;
+    }
+}
+
 int Hospital::getCantidadEnEspera() const {
     return colaEspera.size();
 }
