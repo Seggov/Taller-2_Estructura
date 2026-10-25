@@ -105,12 +105,6 @@ void Paciente::mostrarEnAtencion() const {
     cout << "Sintomas neurologicos: " << sintomasNeurologicos << endl;
     cout << "Requiere cirugia: " << requiereCirugia << endl;
     cout << "Dias de hospitalizacion: " << diasHospitalizacion << endl;
-    if (servicio.empty()) {
-        cout << "Servicio: Pendiente de clasificacion" << endl;
-        return;
-    }
-    cout << "Servicio: " << servicio << endl;
-    cout << "Paciente enviado a " << servicio << "." << endl;
 }
 
 // out de departamento

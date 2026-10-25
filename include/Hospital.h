@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "Estructuras.h"
+#include "ArbolDecision.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ private:
     ColaPacientes colaEspera;
     ListaServicios servicios;
     PilaHistorial historial;
+    ArbolDecision arbol;
 
     // arreglo para los servicios
     string nombresServicios[TOTAL_SERVICIOS];

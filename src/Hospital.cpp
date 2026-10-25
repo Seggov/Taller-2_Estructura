@@ -258,31 +258,37 @@ void Hospital::atenderPacientes(int cantidad) {
     int atendidos = 0;
 
     while (atendidos < cantidad && !colaEspera.isEmpty()) {
+        // 1. se retira de la queue
         Paciente p;
-        if (!colaEspera.consultarFrente(p)) break;
+        if (!colaEspera.dequeue(p)) break;
 
-        // mantiene al paciente en cola hasta conectar el clasificador
-        if (p.getServicio().empty()) {
-            cout << "[AVISO] Los pacientes aun no tienen un servicio asignado. Siguen en espera." << endl;
-            break;
+        // 2 y 3. se evalua con el arbol de decision y se obtiene el servicio
+        string ruta;
+        int depto = arbol.clasificar(p, ruta);
+        if (depto < 0 || depto >= TOTAL_SERVICIOS) {
+            cout << "[ERROR] Paciente " << p.getId() << " no se pudo clasificar." << endl;
+            continue;
         }
+        p.setServicio(nombresServicios[depto]);
 
-        if (colaEspera.dequeue(p)) {
-            // deriva al servicio
-            if (!servicios.agregarPacienteAServicio(p.getServicio(), p)) {
-                cout << "[ERROR] Paciente " << p.getId()
-                     << " rechazado: ID repetido o servicio no valido." << endl;
-                continue;
-            }
+        // 5. se informa el resultado
+        p.mostrarEnAtencion();
+        cout << "\nRuta: " << ruta << endl;
+        cout << "\nServicio asignado: " << nombresServicios[depto] << endl;
 
-            // guarda en historial
-            historial.push(p);
-
-            // imprime la ficha
-            p.mostrarEnAtencion();
-            cout << endl;
-            atendidos++;
+        // 4. se inserta en el AVL del servicio
+        if (!servicios.agregarPacienteAServicio(depto, p)) {
+            cout << "[ERROR] Paciente " << p.getId()
+                 << " rechazado: ID repetido o servicio no valido." << endl;
+            continue;
         }
+        cout << "Paciente insertado en el AVL de " << nombresServicios[depto] << "." << endl;
+
+        // guarda en historial
+        historial.push(p);
+
+        cout << endl;
+        atendidos++;
     }
 }
 
