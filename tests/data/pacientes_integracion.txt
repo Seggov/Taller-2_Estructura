@@ -1,0 +1,9 @@
+ID;Nombre;Edad;Temperatura;PresionArterial;Dolor;TipoDolor;Trauma;SintomasNeurologicos;RequiereCirugia;DiasHospitalizacion
+001;Caso Urgencias;25;38.5;120;3;otro;0;0;0;0
+002;Caso Medicina;25;37.0;120;3;otro;0;0;0;0
+003;Caso Cardiologia;25;37.0;120;3;pecho;0;0;0;0
+004;Caso Neurologia;25;37.0;120;3;cabeza;0;1;0;0
+005;Caso Trauma;25;37.0;120;3;extremidad;1;0;0;0
+006;Caso Cirugia;25;37.0;120;3;abdomen;0;0;1;0
+007;Caso Pediatria;10;37.0;120;3;otro;0;0;0;0
+008;Caso Hospitalizacion;25;37.0;120;3;otro;0;0;0;2

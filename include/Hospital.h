@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "Estructuras.h"
+#include "ArbolDecision.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ private:
     ColaPacientes colaEspera;
     ListaServicios servicios;
     PilaHistorial historial;
+    ArbolDecision clasificador;
 
     // arreglo para los servicios
     string nombresServicios[TOTAL_SERVICIOS];
@@ -38,10 +40,15 @@ public:
     void mostrarCola() const;
     void mostrarDepartamentos() const;
     void mostrarEstadoDepartamento(int indice) const;
+    void mostrarEstadoDepartamento(int indice, int opcion) const;
     void mostrarHistorial() const;
     void buscarPaciente(string criterio) const;
+    bool buscarPaciente(string criterio, Paciente& encontrado, string& servicio) const;
+    bool eliminarPaciente(string id);
+    void mostrarArbolDecision(int recorrido) const;
 
     int getCantidadEnEspera() const;
+    int getCantidadEnServicio(int codigo) const;
 };
 
 #endif

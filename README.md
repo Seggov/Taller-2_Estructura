@@ -9,7 +9,7 @@ Extensión del Taller 1 en C++: clasificar pacientes mediante un árbol de decis
 | Pedro Segovia | 21672694-4 | Seggov | Ingeniería en Tecnologías de la Información | C2 |
 | Luis Molina Aguilera | 21.564.225-9 | mixolydiann | Ingeniería en Tecnologías de la Información | C2 |
 
-## Flujo previsto
+## Funcionamiento
 
 ```mermaid
 flowchart LR
@@ -21,11 +21,11 @@ flowchart LR
 
 `Hospital` coordina el procesamiento en orden de llegada. Cada servicio mantiene su propio AVL, ordenado por ID.
 
-Los AVL permiten insertar y eliminar pacientes, buscar por ID o nombre, mostrar recorridos y consultar altura y balance. El menú permite atender, ver departamentos y buscar.
+El menú permite atender, ver departamentos, buscar, eliminar, recorrer el árbol de decisión y salir. En cada departamento se puede consultar inorden, preorden, postorden, altura y balance.
 
 Los IDs repetidos o servicios inválidos se informan y descartan sin registrar una atención.
 
-**Pruebas locales:** rotaciones, búsquedas y eliminación verificadas. El seguimiento temporal de `new/delete` confirmó la liberación de los nodos de AVL, cola, servicios e historial.
+Las [pruebas del taller](tests/README.md) comprueban clasificación, FIFO, duplicados, datos inválidos y operaciones AVL.
 
 ## Compilación y ejecución
 
@@ -41,7 +41,7 @@ g++ -std=c++17 -Wall -Wextra -Wpedantic src/*.cpp -o hospital
 En Windows con g++:
 
 ```powershell
-g++ -std=c++17 -Wall -Wextra -Wpedantic src/Main.cpp src/Persona.cpp src/Paciente.cpp src/Hospital.cpp src/Estructura.cpp src/ArbolAVL.cpp -o hospital.exe
+g++ -std=c++17 -Wall -Wextra -Wpedantic src/Main.cpp src/Persona.cpp src/Paciente.cpp src/Hospital.cpp src/Estructura.cpp src/ArbolAVL.cpp src/ArbolDecision.cpp -o hospital.exe
 .\hospital.exe
 ```
 
@@ -59,19 +59,21 @@ ID;Nombre;Edad;Temperatura;PresionArterial;Dolor;TipoDolor;Trauma;SintomasNeurol
 - **Tipo de dolor:** `pecho`, `cabeza`, `abdomen`, `extremidad` u `otro`. Trauma, síntomas neurológicos y cirugía aceptan exactamente `0` o `1`.
 - **Errores:** se informa si el archivo no existe. Los registros inválidos o duplicados se omiten indicando línea y motivo; se conserva el primer registro válido de cada ID.
 
-## Servicios
+## Criterio del árbol de decisión
 
-El clasificador devolverá un código para que `Hospital` seleccione el servicio y su AVL:
+La primera condición verdadera determina el servicio. La rama izquierda representa «sí» y la derecha «no». Se utilizan ocho atributos del paciente.
 
-| Código | Servicio |
-| --- | --- |
-| 0 | Urgencias |
-| 1 | Medicina General |
-| 2 | Cardiología |
-| 3 | Neurología |
-| 4 | Traumatología |
-| 5 | Cirugía |
-| 6 | Pediatría |
-| 7 | Hospitalización |
+| Prioridad | Condición | Servicio y código | Justificación |
+| --- | --- | --- | --- |
+| 1 | Edad < 14 | Pediatría · 6 | Separa a los menores antes de evaluar otros criterios. |
+| 2 | RequiereCirugia = 1 | Cirugía · 5 | Incluye cirugía con o sin trauma. |
+| 3 | Trauma = 1 | Traumatología · 4 | Recibe trauma que no requiere cirugía. |
+| 4 | SintomasNeurologicos = 1 | Neurología · 3 | Distingue síntomas neurológicos del dolor aislado. |
+| 5 | TipoDolor = pecho | Cardiología · 2 | Separa los casos de dolor de pecho. |
+| 6 | Temperatura >= 38.5 o Dolor >= 8 | Urgencias · 0 | Agrupa fiebre o dolor intenso. |
+| 7 | DiasHospitalizacion >= 2 | Hospitalización · 7 | Considera estancias de dos días o más. |
+| 8 | Ninguna anterior | Medicina General · 1 | Recibe los casos generales restantes. |
 
-Los códigos internos son `0–7`; la selección de departamentos en el menú usa posiciones `1–8`.
+Ante varias condiciones se respeta este orden: un menor que requiere cirugía queda en Pediatría; un adulto con cirugía y trauma queda en Cirugía. Estos criterios definen la clasificación del taller.
+
+Los datos inválidos o insuficientes producen el código `-1` y se informa el rechazo. Los códigos válidos son `0–7`; la selección de departamentos en el menú usa posiciones `1–8` en el orden Urgencias, Medicina General, Cardiología, Neurología, Traumatología, Cirugía, Pediatría y Hospitalización.
