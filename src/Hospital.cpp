@@ -356,6 +356,12 @@ void Hospital::buscarPaciente(string criterio) const {
 // busca y devuelve la ubicacion
 bool Hospital::buscarPaciente(string criterio, Paciente& encontrado, string& servicio) const {
     if (criterio.empty()) return false;
+
+    // primero revisa el id en los servicios
+    if (servicios.existePaciente(criterio)) {
+        return servicios.buscarPaciente(criterio, encontrado, servicio);
+    }
+
     if (colaEspera.buscar(criterio, encontrado)) {
         servicio = "En espera";
         return true;

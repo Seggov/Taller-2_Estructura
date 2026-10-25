@@ -84,8 +84,20 @@ bool ColaPacientes::existe(string id) const {
 // busca por id o nombre
 bool ColaPacientes::buscar(string criterio, Paciente& encontrado) const {
     NodoPaciente* actual = front;
+
+    // primero busca el id
     while (actual != nullptr) {
-        if (actual->dato.getId() == criterio || actual->dato.getNombre() == criterio) {
+        if (actual->dato.getId() == criterio) {
+            encontrado = actual->dato;
+            return true;
+        }
+        actual = actual->siguiente;
+    }
+
+    // despues busca el nombre
+    actual = front;
+    while (actual != nullptr) {
+        if (actual->dato.getNombre() == criterio) {
             encontrado = actual->dato;
             return true;
         }
