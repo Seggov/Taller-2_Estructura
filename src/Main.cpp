@@ -7,29 +7,35 @@ using namespace std;
 
 // prototipos para el menu
 void menu();
-int leerNumero();
-int selector();
+bool leerNumero(int& valor);
+bool selector(int& opcion);
+void consultarDepartamento(Hospital& hospital);
 
 int main() {
     Hospital hospital;
 
     // carga inicial de pacientes
     cout << "Iniciando sistema Hospital Marmaja..." << endl;
-    hospital.cargarPacientes("data/data.txt"); // verificar con "pacientes.txt"
+    hospital.cargarPacientes("data/data.txt");
 
     bool esTerminado = false;
 
     // ciclo del menu
     while (!esTerminado) {
         menu();
-        int user_selector = selector();
+        int user_selector = 0;
+        if (!selector(user_selector)) break;
         switch (user_selector) {
             // opcion atender
             case 1: {
                 hospital.mostrarCola();
                 if (hospital.getCantidadEnEspera() > 0) {
                     cout << "\nIndique la cantidad de pacientes a atender: ";
-                    int cant = leerNumero();
+                    int cant = 0;
+                    if (!leerNumero(cant)) {
+                        esTerminado = true;
+                        break;
+                    }
                     hospital.atenderPacientes(cant);
                 }
                 break;
@@ -37,10 +43,7 @@ int main() {
 
             // opcion ver departamentos
             case 2: {
-                hospital.mostrarDepartamentos();
-                cout << "\nSeleccionar opcion: ";
-                int depto = leerNumero();
-                hospital.mostrarEstadoDepartamento(depto);
+                consultarDepartamento(hospital);
                 break;
             }
 
@@ -48,13 +51,29 @@ int main() {
             case 3: {
                 cout << "\nIngrese el ID o Nombre a buscar: ";
                 string criterio;
-                getline(cin, criterio);
+                if (!getline(cin, criterio)) {
+                    esTerminado = true;
+                    break;
+                }
                 hospital.buscarPaciente(criterio);
                 break;
             }
 
-            // opcion salir
+            // opcion eliminar
             case 4: {
+                cout << "\nIngrese el ID del paciente a eliminar: ";
+                string id;
+                if (!getline(cin, id)) {
+                    esTerminado = true;
+                    break;
+                }
+                if (hospital.eliminarPaciente(id)) cout << "Paciente eliminado del AVL." << endl;
+                else cout << "No se encontro el ID en los servicios." << endl;
+                break;
+            }
+
+            // opcion salir
+            case 5: {
                 cout << "\nHasta luego :D." << endl;
                 esTerminado = true;
                 break;
@@ -78,24 +97,43 @@ void menu() {
     cout << "1. Atender pacientes" << endl;
     cout << "2. Ver departamento" << endl;
     cout << "3. Buscar paciente" << endl;
-    cout << "4. Salir" << endl;
+    cout << "4. Eliminar paciente" << endl;
+    cout << "5. Salir" << endl;
 }
 
 
 // lee numero evitando errores
-int leerNumero() {
-    int valor = 0;
+bool leerNumero(int& valor) {
     while (!(cin >> valor)) {
+        if (cin.eof()) return false;
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // inng
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Entrada invalida. Ingrese un numero: ";
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    return valor;
+    return true;
 }
 
 // selector de opcion
-int selector() {
+bool selector(int& opcion) {
     cout << "\nSeleccionar opcion: ";
-    return leerNumero();
+    return leerNumero(opcion);
+}
+
+// consulta el departamento
+void consultarDepartamento(Hospital& hospital) {
+    hospital.mostrarDepartamentos();
+    cout << "\nSeleccione departamento (0 para volver): ";
+    int indice = 0;
+    if (!leerNumero(indice) || indice == 0) return;
+    if (indice < 1 || indice > TOTAL_SERVICIOS) {
+        cout << "[ERROR] Departamento no valido." << endl;
+        return;
+    }
+
+    cout << "1. Inorden\n2. Preorden\n3. Postorden\n4. Altura\n5. Balance\n0. Volver" << endl;
+    cout << "Seleccionar consulta: ";
+    int opcion = 0;
+    if (!leerNumero(opcion) || opcion == 0) return;
+    hospital.mostrarEstadoDepartamento(indice, opcion);
 }

@@ -249,6 +249,10 @@ void Hospital::mostrarCola() const {
 
 // atencion de pacientes y derivacion
 void Hospital::atenderPacientes(int cantidad) {
+    if (cantidad <= 0) {
+        cout << "[ERROR] La cantidad debe ser mayor que cero." << endl;
+        return;
+    }
     if (colaEspera.isEmpty()) {
         cout << "\n(No hay pacientes en cola de espera)" << endl;
         return;
@@ -258,11 +262,11 @@ void Hospital::atenderPacientes(int cantidad) {
     int atendidos = 0;
 
     while (atendidos < cantidad && !colaEspera.isEmpty()) {
-        // 1. se retira de la queue
+        // saca el primer paciente
         Paciente p;
         if (!colaEspera.dequeue(p)) break;
 
-        // 2 y 3. se evalua con el arbol de decision y se obtiene el servicio
+        // clasifica al paciente
         string ruta;
         int depto = arbol.clasificar(p, ruta);
         if (depto < 0 || depto >= TOTAL_SERVICIOS) {
@@ -271,22 +275,20 @@ void Hospital::atenderPacientes(int cantidad) {
         }
         p.setServicio(nombresServicios[depto]);
 
-        // 5. se informa el resultado
-        p.mostrarEnAtencion();
-        cout << "\nRuta: " << ruta << endl;
-        cout << "\nServicio asignado: " << nombresServicios[depto] << endl;
-
-        // 4. se inserta en el AVL del servicio
+        // inserta en el avl
         if (!servicios.agregarPacienteAServicio(depto, p)) {
             cout << "[ERROR] Paciente " << p.getId()
                  << " rechazado: ID repetido o servicio no valido." << endl;
             continue;
         }
-        cout << "Paciente insertado en el AVL de " << nombresServicios[depto] << "." << endl;
-
         // guarda en historial
         historial.push(p);
 
+        // muestra el resultado
+        p.mostrarEnAtencion();
+        cout << "\nRuta: " << ruta << endl;
+        cout << "\nServicio asignado: " << nombresServicios[depto] << endl;
+        cout << "Paciente insertado en el AVL de " << nombresServicios[depto] << "." << endl;
         cout << endl;
         atendidos++;
     }
@@ -300,6 +302,11 @@ void Hospital::mostrarDepartamentos() const {
 
 // out de pacientes en el servicio seleccionado
 void Hospital::mostrarEstadoDepartamento(int indice) const {
+    mostrarEstadoDepartamento(indice, 1);
+}
+
+// consultas del avl
+void Hospital::mostrarEstadoDepartamento(int indice, int opcion) const {
     NodoServicio* nodo = servicios.obtenerPorIndice(indice);
     if (nodo != nullptr) {
         string nomMayus = nodo->nombre;
@@ -307,7 +314,14 @@ void Hospital::mostrarEstadoDepartamento(int indice) const {
 
         cout << "\n=== ESTADO " << nomMayus << " ===" << endl;
         cout << "Pacientes en el departamento de " << nodo->nombre << ": " << nodo->pacientes.size() << endl;
-        nodo->pacientes.mostrarInorden();
+        switch (opcion) {
+            case 1: nodo->pacientes.mostrarInorden(); break;
+            case 2: nodo->pacientes.mostrarPreorden(); break;
+            case 3: nodo->pacientes.mostrarPostorden(); break;
+            case 4: cout << "Altura del AVL: " << nodo->pacientes.obtenerAltura() << endl; break;
+            case 5: nodo->pacientes.mostrarBalance(); break;
+            default: cout << "[ERROR] Consulta no valida." << endl;
+        }
     } else {
         cout << "\n[ERROR] Departamento no valido." << endl;
     }
@@ -326,22 +340,42 @@ void Hospital::buscarPaciente(string criterio) const {
     cout << "\n--- Resultado de Busqueda: '" << criterio << "' ---" << endl;
 
     Paciente p;
-    if (colaEspera.buscar(criterio, p)) {
-        cout << "[EN COLA DE ESPERA]" << endl;
-        p.mostrar();
-        return;
-    }
-
     string serv;
-    if (servicios.buscarPaciente(criterio, p, serv)) {
-        cout << "[ATENDIDO EN: " << serv << "]" << endl;
-        p.mostrar();
+    if (!buscarPaciente(criterio, p, serv)) {
+        cout << "No se encontro ningun paciente con ese criterio." << endl;
         return;
     }
+    if (serv == "En espera") {
+        cout << "[EN COLA DE ESPERA]" << endl;
+    } else {
+        cout << "[ATENDIDO EN: " << serv << "]" << endl;
+    }
+    p.mostrar();
+}
 
-    cout << "No se encontro ningun paciente con ese criterio." << endl;
+// busca y devuelve la ubicacion
+bool Hospital::buscarPaciente(string criterio, Paciente& encontrado, string& servicio) const {
+    if (criterio.empty()) return false;
+    if (colaEspera.buscar(criterio, encontrado)) {
+        servicio = "En espera";
+        return true;
+    }
+    return servicios.buscarPaciente(criterio, encontrado, servicio);
+}
+
+// elimina por id
+bool Hospital::eliminarPaciente(string id) {
+    return servicios.eliminarPaciente(id);
 }
 
 int Hospital::getCantidadEnEspera() const {
     return colaEspera.size();
+}
+
+// cantidad por codigo de servicio
+int Hospital::getCantidadEnServicio(int codigo) const {
+    if (codigo < 0 || codigo >= TOTAL_SERVICIOS) return -1;
+    NodoServicio* servicio = servicios.obtenerPorIndice(codigo + 1);
+    if (servicio == nullptr) return -1;
+    return servicio->pacientes.size();
 }
