@@ -23,6 +23,8 @@ flowchart LR
 
 El menú permite atender, consultar departamentos, buscar por ID o nombre, eliminar por ID, ver el árbol de decisión y salir. En cada departamento se puede consultar inorden, preorden, postorden, altura y balance del AVL. La opción 5 muestra los recorridos del clasificador y la opción 6 permite salir.
 
+La búsqueda prioriza el ID en la cola y los servicios. Si no existe, busca por nombre.
+
 Los IDs repetidos o servicios inválidos se informan y descartan sin registrar una atención.
 
 **Pruebas locales:** rotaciones, búsquedas y eliminación verificadas. El seguimiento temporal de `new/delete` confirmó la liberación de los nodos de AVL, cola, servicios e historial.

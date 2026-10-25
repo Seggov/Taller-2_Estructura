@@ -16,3 +16,5 @@ En el programa principal, la opcion 5 permite elegir el recorrido del clasificad
 Los mensajes de rechazo corresponden a los casos invalidos del archivo de prueba. El resultado final debe ser `Todas las pruebas pasaron.` y el codigo de salida `0`.
 
 En `pacientes_integracion.txt`, los ID `001` a `008` corresponden a Urgencias, Medicina General, Cardiologia, Neurologia, Traumatologia, Cirugia, Pediatria y Hospitalizacion, respectivamente.
+
+En `pacientes_busqueda.txt`, algunos nombres coinciden con otros ID. Se comprueba que el ID tenga prioridad en la cola y en los servicios sin cambiar el orden de llegada.
