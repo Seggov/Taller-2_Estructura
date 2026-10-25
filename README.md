@@ -9,7 +9,7 @@ Extensión del Taller 1 en C++: clasificar pacientes mediante un árbol de decis
 | Pedro Segovia | 21672694-4 | Seggov | Ingeniería en Tecnologías de la Información | C2 |
 | Luis Molina Aguilera | 21564225-9 | mixolydiann | Ingeniería en Tecnologías de la Información | C2 |
 
-## Flujo previsto
+## Flujo del sistema
 
 ```mermaid
 flowchart LR
@@ -21,11 +21,13 @@ flowchart LR
 
 `Hospital` coordina el procesamiento en orden de llegada. Cada servicio mantiene su propio AVL, ordenado por ID.
 
-Los AVL permiten insertar y eliminar pacientes, buscar por ID o nombre, mostrar recorridos y consultar altura y balance. El menú permite atender, ver departamentos y buscar.
+El menú permite atender, consultar departamentos, buscar por ID o nombre, eliminar por ID y salir. En cada departamento se puede consultar inorden, preorden, postorden, altura y balance del AVL.
 
 Los IDs repetidos o servicios inválidos se informan y descartan sin registrar una atención.
 
 **Pruebas locales:** rotaciones, búsquedas y eliminación verificadas. El seguimiento temporal de `new/delete` confirmó la liberación de los nodos de AVL, cola, servicios e historial.
+
+Las comprobaciones del clasificador, FIFO y AVL se ejecutan siguiendo [tests/README.md](tests/README.md).
 
 ## Compilación y ejecución
 
@@ -61,7 +63,7 @@ ID;Nombre;Edad;Temperatura;PresionArterial;Dolor;TipoDolor;Trauma;SintomasNeurol
 
 ## Servicios
 
-El clasificador devolverá un código para que `Hospital` seleccione el servicio y su AVL:
+El clasificador devuelve un código para que `Hospital` seleccione el servicio y su AVL:
 
 | Código | Servicio |
 | --- | --- |
